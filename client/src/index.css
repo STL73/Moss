@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import "tailwindcss";
+
+
+
+@theme {
+  --color-slate-gray: #6b7280;
+  --color-pale-green: #d9f2de;
+  --color-light-green: #4caf50;
+  --color-dark-green: #256d34;
+  --color-moss-green: #3a8d46;
+  --color-bg-color: #65b372;
+  --color-text-accent: #2f2776;
+  --color-primary-green: #137957;
+  --color-bg-green: #b2edbc;
+  --font-playfair: "Playfair", serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
+  --font-palanquin: "Palanquin", sans-serif;
+  --font-size-sm: [14px, 20px];
+  --font-size-base: [16px, 19.5px];
+  --font-size-xs: [12px, 16px];
+  --font-size-lg: [18px, 21.94px];
+  --font-size-xl: [20px, 24.38px];
+  --font-size-2xl: [24px, 29.26px];
+  --font-size-3xl: [28px, 50px];
+  --font-size-4xl: [48px, 58px];
+  --font-size-8xl: [96px, 106px];
+  --screen-wide: 1440px;
+  --background-image-hero: url("/src/assets/images/mossCloseup.jpg");
+  --shadow-3xl: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .max-container {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .input {
+    @apply sm:flex-1 max-sm:w-full text-base leading-normal text-text-accent pl-5 max-sm:p-5 outline-none sm:border-none border max-sm:border-text-accent max-sm:rounded-full font-montserrat;
+  }
+}
+
+@layer utilities {
+  .padding {
+    @apply sm:px-16 px-8 sm:py-24 py-12;
+  }
+
+  .padding-x {
+    @apply sm:px-16 px-8;
+  }
+
+  .padding-y {
+    @apply sm:py-24 py-12;
+  }
+
+  .padding-l {
+    @apply sm:pl-16 pl-8;
+  }
+
+  .padding-r {
+    @apply sm:pr-16 pr-8;
+  }
+
+  .padding-t {
+    @apply sm:pt-24 pt-12;
+  }
+
+  .padding-b {
+    @apply sm:pb-24 pb-12;
+  }
+
+  .info-text {
+    @apply font-montserrat text-text-accent/80 text-lg leading-7;
+  }
+
+  .shadow-3xl {
+    box-shadow: var(--shadow-3xl);
+  }
+
+  .bg-hero {
+    background-image: var(--background-image-hero);
+    background-size: cover;
+    background-position: center;
+    /* background-repeat: no-repeat; */
+    /* background-attachment: fixed; */
+  }
+
+  .max-w-wide {
+    max-width: var(--screen-wide);
+  }
+}

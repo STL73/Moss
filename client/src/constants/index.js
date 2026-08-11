@@ -1,9 +1,10 @@
 import { FaFacebookF, FaXTwitter, FaInstagram, FaTiktok } from 'react-icons/fa6';
 
+// Every entry must resolve to something that exists. A "Journal" link used to
+// sit here pointing at /#story, an anchor no section ever rendered.
 export const navLinks = [
     { to: '/products', label: 'Shop' },
     { to: '/#about', label: 'About' },
-    { to: '/#story', label: 'Journal' },
 ];
 
 export const footerLinks = [

@@ -1,6 +1,5 @@
-import { createContext, useContext, useReducer, useEffect, useMemo } from 'react';
-
-const CartContext = createContext(null);
+import { useReducer, useEffect, useMemo } from 'react';
+import { CartContext } from '../hooks/useCart';
 
 const STORAGE_KEY = 'cart';
 
@@ -63,10 +62,4 @@ export const CartProvider = ({ children }) => {
     }), [items]);
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-};
-
-export const useCart = () => {
-    const context = useContext(CartContext);
-    if (!context) throw new Error('useCart must be used inside a CartProvider');
-    return context;
 };

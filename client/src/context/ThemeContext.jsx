@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-
-const ThemeContext = createContext(null);
+import { ThemeContext } from '../hooks/useTheme';
 
 // Dark is the design default. A stored choice always wins; otherwise we follow
 // the OS, falling back to dark when the OS expresses no preference.
@@ -22,10 +21,4 @@ export const ThemeProvider = ({ children }) => {
             {children}
         </ThemeContext.Provider>
     );
-};
-
-export const useTheme = () => {
-    const context = useContext(ThemeContext);
-    if (!context) throw new Error('useTheme must be used inside a ThemeProvider');
-    return context;
 };

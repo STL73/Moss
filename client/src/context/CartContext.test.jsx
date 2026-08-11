@@ -1,17 +1,13 @@
-import { render, screen, act } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { CartProvider, useCart } from './CartContext';
+import { CartProvider } from './CartContext';
+import { useCart } from '../hooks/useCart';
 
 const sample = { id: '1', slug: 'kivi-sphere', name: 'Kivi Sphere', price: 8500, images: ['a.jpg'] };
 
-let cart;
+const wrapper = ({ children }) => <CartProvider>{children}</CartProvider>;
 
-const Probe = () => {
-    cart = useCart();
-    return <span data-testid="count">{cart.itemCount}</span>;
-};
-
-const setup = () => render(<CartProvider><Probe /></CartProvider>);
+const setup = () => renderHook(() => useCart(), { wrapper });
 
 describe('CartContext', () => {
     beforeEach(() => {
@@ -19,58 +15,58 @@ describe('CartContext', () => {
     });
 
     it('starts empty', () => {
-        setup();
-        expect(screen.getByTestId('count')).toHaveTextContent('0');
-        expect(cart.total).toBe(0);
+        const { result } = setup();
+        expect(result.current.itemCount).toBe(0);
+        expect(result.current.total).toBe(0);
     });
 
     it('adds an item', () => {
-        setup();
-        act(() => cart.addItem(sample));
-        expect(cart.itemCount).toBe(1);
-        expect(cart.total).toBe(8500);
+        const { result } = setup();
+        act(() => result.current.addItem(sample));
+        expect(result.current.itemCount).toBe(1);
+        expect(result.current.total).toBe(8500);
     });
 
     it('increments quantity when the same item is added twice', () => {
-        setup();
-        act(() => cart.addItem(sample));
-        act(() => cart.addItem(sample));
-        expect(cart.items).toHaveLength(1);
-        expect(cart.itemCount).toBe(2);
-        expect(cart.total).toBe(17000);
+        const { result } = setup();
+        act(() => result.current.addItem(sample));
+        act(() => result.current.addItem(sample));
+        expect(result.current.items).toHaveLength(1);
+        expect(result.current.itemCount).toBe(2);
+        expect(result.current.total).toBe(17000);
     });
 
     it('sets an explicit quantity', () => {
-        setup();
-        act(() => cart.addItem(sample));
-        act(() => cart.setQuantity('1', 3));
-        expect(cart.itemCount).toBe(3);
+        const { result } = setup();
+        act(() => result.current.addItem(sample));
+        act(() => result.current.setQuantity('1', 3));
+        expect(result.current.itemCount).toBe(3);
     });
 
     it('removes an item when quantity drops to zero', () => {
-        setup();
-        act(() => cart.addItem(sample));
-        act(() => cart.setQuantity('1', 0));
-        expect(cart.items).toHaveLength(0);
+        const { result } = setup();
+        act(() => result.current.addItem(sample));
+        act(() => result.current.setQuantity('1', 0));
+        expect(result.current.items).toHaveLength(0);
     });
 
     it('removes an item explicitly', () => {
-        setup();
-        act(() => cart.addItem(sample));
-        act(() => cart.removeItem('1'));
-        expect(cart.items).toHaveLength(0);
+        const { result } = setup();
+        act(() => result.current.addItem(sample));
+        act(() => result.current.removeItem('1'));
+        expect(result.current.items).toHaveLength(0);
     });
 
     it('clears the cart', () => {
-        setup();
-        act(() => cart.addItem(sample));
-        act(() => cart.clear());
-        expect(cart.items).toHaveLength(0);
+        const { result } = setup();
+        act(() => result.current.addItem(sample));
+        act(() => result.current.clear());
+        expect(result.current.items).toHaveLength(0);
     });
 
     it('persists to localStorage', () => {
-        setup();
-        act(() => cart.addItem(sample));
+        const { result } = setup();
+        act(() => result.current.addItem(sample));
         const stored = JSON.parse(window.localStorage.getItem('cart'));
         expect(stored).toHaveLength(1);
         expect(stored[0].quantity).toBe(1);
@@ -78,7 +74,7 @@ describe('CartContext', () => {
 
     it('rehydrates from localStorage', () => {
         window.localStorage.setItem('cart', JSON.stringify([{ ...sample, quantity: 2 }]));
-        setup();
-        expect(cart.itemCount).toBe(2);
+        const { result } = setup();
+        expect(result.current.itemCount).toBe(2);
     });
 });

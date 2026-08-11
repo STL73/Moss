@@ -1,10 +1,17 @@
 import { FaFacebookF, FaXTwitter, FaInstagram, FaTiktok } from 'react-icons/fa6';
 
+// Single source for the details shown in the footer and on the contact page,
+// so the two can never drift apart.
+export const contactEmail = 'customer@mossart.com';
+export const contactPhone = '+44 7700 900142';
+export const contactTel = `tel:${contactPhone.replace(/\s/g, '')}`;
+
 // Every entry must resolve to something that exists. A "Journal" link used to
 // sit here pointing at /#story, an anchor no section ever rendered.
 export const navLinks = [
     { to: '/products', label: 'Shop' },
     { to: '/#about', label: 'About' },
+    { to: '/contact', label: 'Contact' },
 ];
 
 export const footerLinks = [
@@ -21,16 +28,16 @@ export const footerLinks = [
         title: 'Help',
         links: [
             { name: 'About us', to: '/#about' },
-            { name: 'FAQs', to: '/#faq' },
-            { name: 'Delivery', to: '/#delivery' },
-            { name: 'Returns', to: '/#returns' },
+            { name: 'FAQs', to: '/contact#faq' },
+            { name: 'Delivery', to: '/contact#delivery' },
+            { name: 'Returns', to: '/contact#returns' },
         ],
     },
     {
         title: 'Get in touch',
         links: [
-            { name: 'customer@mossart.com', to: 'mailto:customer@mossart.com' },
-            { name: '+44 7700 900142', to: 'tel:+447700900142' },
+            { name: contactEmail, to: `mailto:${contactEmail}` },
+            { name: contactPhone, to: contactTel },
         ],
     },
 ];

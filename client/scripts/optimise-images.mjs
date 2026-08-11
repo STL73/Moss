@@ -2,7 +2,7 @@
 import sharp from 'sharp';
 import { mkdir } from 'node:fs/promises';
 
-const SRC = 'src/assets/icons/Design-10.png';
+const SRC = 'src/assets/brand/Design-10.png';
 const OUT_DIR = 'src/assets/brand';
 
 await mkdir(OUT_DIR, { recursive: true });

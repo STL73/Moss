@@ -1,21 +1,33 @@
-// One-off image optimiser. Run with: npm run images
+// Image optimiser. Run with: npm run images
+//
+// Source photography is kept as-is — those files are the client's masters and
+// several are 6000px+ straight off a camera. This writes web-sized .webp
+// siblings next to them, and the asset barrel imports only those. Re-running
+// is safe: every output is overwritten from its source.
 import sharp from 'sharp';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, readdir, stat } from 'node:fs/promises';
 
-const SRC = 'src/assets/brand/Design-10.png';
-const OUT_DIR = 'src/assets/brand';
+const IMAGES_DIR = 'src/assets/images';
+const BRAND_DIR = 'src/assets/brand';
 
-await mkdir(OUT_DIR, { recursive: true });
+// Nothing renders wider than roughly 700 CSS px (the product-detail gallery on
+// a 1440px layout), so 1400 covers a 2x display with room to spare.
+const MAX_WIDTH = 1400;
+const QUALITY = 78;
+
+await mkdir(BRAND_DIR, { recursive: true });
 // public/ is not in the repo yet — the touch icon below is its first occupant.
 await mkdir('public', { recursive: true });
 
-// Hero: 2000px wide is ample for a 15% Ken Burns zoom on a 4K display.
-const info = await sharp(SRC)
-    .resize(2000, null, { withoutEnlargement: true })
-    .webp({ quality: 78 })
-    .toFile(`${OUT_DIR}/hero.webp`);
+const kb = (bytes) => `${(bytes / 1024).toFixed(0)} KB`;
 
-console.log(`hero.webp  ${(info.size / 1024).toFixed(0)} KB  ${info.width}x${info.height}`);
+// Hero: 2000px wide is ample for a 15% Ken Burns zoom on a 4K display.
+const hero = await sharp(`${BRAND_DIR}/Design-10.png`)
+    .resize(2000, null, { withoutEnlargement: true })
+    .webp({ quality: QUALITY })
+    .toFile(`${BRAND_DIR}/hero.webp`);
+
+console.log(`hero.webp  ${kb(hero.size)}  ${hero.width}x${hero.height}`);
 
 // iOS home-screen icon. Safari still ignores SVG favicons, so the logo is
 // rasterised once at 180px on the dark background colour.
@@ -31,3 +43,34 @@ const LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 
 await sharp(Buffer.from(LOGO)).resize(180, 180).png().toFile('public/apple-touch-icon.png');
 console.log('apple-touch-icon.png  180x180');
+
+// Product and moss photography.
+const sources = (await readdir(IMAGES_DIR)).filter((file) => /\.(jpe?g|png)$/i.test(file));
+
+let before = 0;
+let after = 0;
+
+for (const file of sources) {
+    const source = `${IMAGES_DIR}/${file}`;
+    const target = `${IMAGES_DIR}/${file.replace(/\.(jpe?g|png)$/i, '.webp')}`;
+
+    const { size } = await stat(source);
+    const result = await sharp(source)
+        .resize(MAX_WIDTH, null, { withoutEnlargement: true })
+        .webp({ quality: QUALITY })
+        .toFile(target);
+
+    before += size;
+    after += result.size;
+
+    console.log(
+        `${file.padEnd(20)} ${kb(size).padStart(8)} -> ${kb(result.size).padStart(7)}` +
+        `  ${result.width}x${result.height}`
+    );
+}
+
+const saved = ((1 - after / before) * 100).toFixed(1);
+console.log(
+    `\n${sources.length} photos: ${(before / 1024 / 1024).toFixed(1)} MB -> ` +
+    `${(after / 1024 / 1024).toFixed(1)} MB (${saved}% smaller)`
+);

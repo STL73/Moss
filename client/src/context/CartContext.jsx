@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useMemo } from 'react';
+import { useReducer, useEffect, useMemo, useState, useRef } from 'react';
 import { CartContext } from '../hooks/useCart';
 
 const STORAGE_KEY = 'cart';
@@ -51,15 +51,39 @@ export const CartProvider = ({ children }) => {
         }
     }, [items]);
 
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
+    const [toast, setToast] = useState(null);
+    const toastTimer = useRef(null);
+
+    const showToast = (message) => {
+        clearTimeout(toastTimer.current);
+        setToast(message);
+        toastTimer.current = setTimeout(() => setToast(null), 2600);
+    };
+
+    // A pending timer must not fire after the provider unmounts.
+    useEffect(() => () => clearTimeout(toastTimer.current), []);
+
     const value = useMemo(() => ({
         items,
         itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
         total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-        addItem: (product, quantity = 1) => dispatch({ type: 'ADD_ITEM', product, quantity }),
+        drawerOpen,
+        openDrawer: () => setDrawerOpen(true),
+        closeDrawer: () => setDrawerOpen(false),
+        toast,
+        // Adding always reveals the basket, so the result of the action is
+        // visible without the user going looking for it.
+        addItem: (product, quantity = 1) => {
+            dispatch({ type: 'ADD_ITEM', product, quantity });
+            setDrawerOpen(true);
+            showToast(`${product.name} added to basket`);
+        },
         removeItem: (id) => dispatch({ type: 'REMOVE_ITEM', id }),
         setQuantity: (id, quantity) => dispatch({ type: 'SET_QUANTITY', id, quantity }),
         clear: () => dispatch({ type: 'CLEAR' }),
-    }), [items]);
+    }), [items, drawerOpen, toast]);
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

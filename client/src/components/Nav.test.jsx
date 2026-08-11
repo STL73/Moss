@@ -3,12 +3,15 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ThemeProvider } from '../context/ThemeContext';
+import { CartProvider } from '../context/CartContext';
 import Nav from './Nav';
 
 const renderNav = () =>
     render(
         <MemoryRouter>
-            <ThemeProvider><Nav /></ThemeProvider>
+            <ThemeProvider>
+                <CartProvider><Nav /></CartProvider>
+            </ThemeProvider>
         </MemoryRouter>
     );
 

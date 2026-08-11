@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
-import { LuMenu, LuX } from 'react-icons/lu';
+import { LuMenu, LuX, LuShoppingBasket } from 'react-icons/lu';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
+import { useCart } from '../hooks/useCart';
 import { navLinks } from '../constants';
 
 const Nav = () => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { itemCount, openDrawer } = useCart();
 
     // Escape closes the menu, and the body must not scroll behind it.
     useEffect(() => {
@@ -50,6 +52,22 @@ const Nav = () => {
 
                 <div className="flex items-center gap-1">
                     <ThemeToggle />
+                    <button
+                        type="button"
+                        onClick={openDrawer}
+                        aria-label={`Open basket, ${itemCount} items`}
+                        className="p-2 rounded-full text-text-muted hover:text-text relative
+                                   transition-colors duration-200 cursor-pointer"
+                    >
+                        <LuShoppingBasket size={19} />
+                        {itemCount > 0 && (
+                            <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full
+                                             bg-accent text-on-accent text-[10px] font-semibold
+                                             grid place-items-center">
+                                {itemCount}
+                            </span>
+                        )}
+                    </button>
                     <button
                         type="button"
                         onClick={() => setMenuOpen(true)}

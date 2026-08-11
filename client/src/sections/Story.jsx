@@ -10,12 +10,12 @@ const Story = () => (
                     src={moss1}
                     alt="Moss growing across a woodland floor"
                     loading="lazy"
-                    className="w-full aspect-[4/3] object-cover rounded-2xl"
+                    className="w-full aspect-4/3 object-cover rounded-2xl"
                 />
             </div>
             <div className="flex-1">
                 <p className="eyebrow">Our process</p>
-                <h2 className="font-display text-[length:var(--text-display)] leading-tight mt-4">
+                <h2 className="font-display text-(length:--text-display) leading-tight mt-4">
                     Grown slowly, <em className="text-accent italic">made by hand</em>
                 </h2>
                 <p className="mt-6 text-text-muted leading-relaxed">

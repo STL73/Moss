@@ -24,7 +24,7 @@ const FeaturedProducts = () => {
     return (
         <section id="featured" className="max-container padding-x py-24">
             <div className="flex justify-between items-end gap-6">
-                <h2 className="font-display text-[length:var(--text-display)] leading-tight">
+                <h2 className="font-display text-(length:--text-display) leading-tight">
                     Selected <em className="text-accent italic">pieces</em>
                 </h2>
                 <Link

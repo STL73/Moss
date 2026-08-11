@@ -95,7 +95,7 @@
   }
 
   .eyebrow {
-    @apply text-[length:var(--text-eyebrow)] uppercase tracking-[0.18em] text-text-muted;
+    @apply text-(length:--text-eyebrow) uppercase tracking-[0.18em] text-text-muted;
   }
 
   .card-surface {

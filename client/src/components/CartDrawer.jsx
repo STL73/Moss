@@ -75,7 +75,7 @@ const CartDrawer = () => {
                                     <img
                                         src={item.images[0]}
                                         alt={item.name}
-                                        className="w-16 h-16 rounded-lg object-cover shrink-0"
+                                        className="size-16 rounded-lg object-cover shrink-0"
                                     />
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium truncate">{item.name}</p>

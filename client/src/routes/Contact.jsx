@@ -108,7 +108,7 @@ const Contact = () => (
                         </div>
                         <a
                             href={href}
-                            className="block mt-3 font-display text-[length:var(--text-title)]
+                            className="block mt-3 font-display text-(length:--text-title)
                                        hover:text-accent transition-colors duration-200"
                         >
                             {value}
@@ -125,7 +125,7 @@ const Contact = () => (
 
             {sections.map((section) => (
                 <section key={section.id} id={section.id} className="pt-20 scroll-mt-28">
-                    <h2 className="font-display text-[length:var(--text-display)] leading-tight">
+                    <h2 className="font-display text-(length:--text-display) leading-tight">
                         {section.title} <em className="text-accent italic">{section.accent}</em>
                     </h2>
                     <dl className="mt-8 flex flex-col gap-6 max-w-2xl">

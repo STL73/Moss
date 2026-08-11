@@ -26,7 +26,7 @@ const Hero = () => {
             <section ref={ref} id="home" className="relative flex xl:flex-row flex-col min-h-[88vh] max-container">
                 <div className="xl:w-[45%] w-full flex flex-col justify-center padding-x py-20 z-10">
                     <p className="eyebrow">Handmade in small batches</p>
-                    <h1 className="font-display text-[length:var(--text-hero)] leading-[0.98] mt-6">
+                    <h1 className="font-display text-(length:--text-hero) leading-[0.98] mt-6">
                         Living <em className="text-accent italic">texture</em>
                     </h1>
                     <p className="mt-7 max-w-sm text-text-muted leading-relaxed">
@@ -46,7 +46,7 @@ const Hero = () => {
                             src={heroImage}
                             alt="Close-up of preserved moss with a water droplet"
                             fetchPriority="high"
-                            className="w-full h-full object-cover animate-ken-burns"
+                            className="size-full object-cover animate-ken-burns"
                         />
                     </motion.div>
                 </div>
@@ -56,7 +56,7 @@ const Hero = () => {
                 <div className="flex justify-between flex-wrap gap-10">
                     {stats.map((stat) => (
                         <div key={stat.label}>
-                            <p className="font-display text-[length:var(--text-title)]">
+                            <p className="font-display text-(length:--text-title)">
                                 {stat.value} <em className="text-accent italic">{stat.label}</em>
                             </p>
                             <p className="eyebrow mt-2">{stat.suffix}</p>

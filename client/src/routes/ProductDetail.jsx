@@ -68,7 +68,7 @@ const ProductDetailView = ({ slug }) => {
 
                 <div>
                     <p className="eyebrow">{product.species}</p>
-                    <h1 className="font-display text-[length:var(--text-display)] leading-tight mt-3">
+                    <h1 className="font-display text-(length:--text-display) leading-tight mt-3">
                         {product.name}
                     </h1>
                     <p className="text-accent text-2xl font-medium mt-4">{formatPrice(product.price)}</p>
@@ -99,7 +99,7 @@ const ProductDetailView = ({ slug }) => {
             </div>
 
             <section className="max-container padding-x pb-24">
-                <h2 className="font-display text-[length:var(--text-title)]">
+                <h2 className="font-display text-(length:--text-title)">
                     You may also <em className="text-accent italic">like</em>
                 </h2>
                 <div className="mt-8 grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5">

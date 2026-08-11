@@ -40,7 +40,7 @@ const Cart = () => {
                             <img
                                 src={item.images[0]}
                                 alt={item.name}
-                                className="w-24 h-24 rounded-xl object-cover shrink-0"
+                                className="size-24 rounded-xl object-cover shrink-0"
                             />
                             <div className="flex-1 min-w-0">
                                 <Link to={`/products/${item.slug}`} className="font-medium hover:text-accent transition-colors">
@@ -69,7 +69,7 @@ const Cart = () => {
                 </ul>
 
                 <aside className="card-surface p-6 h-fit lg:sticky lg:top-28">
-                    <h2 className="font-display text-[length:var(--text-title)]">Summary</h2>
+                    <h2 className="font-display text-(length:--text-title)">Summary</h2>
                     <dl className="mt-6 flex flex-col gap-3 text-sm">
                         <div className="flex justify-between">
                             <dt className="text-text-muted">Subtotal</dt>

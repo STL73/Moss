@@ -217,9 +217,17 @@ Ships as three artefacts:
 At 16px the crown simplifies from six peaks to three; six become unreadable at
 that size.
 
-The existing `header-logo.png` and both `icons8-moss-color-*.png` files are
-retired. Beyond being 96px raster and unable to recolour, the icons8 assets
-are third-party clip art whose free licence requires visible attribution.
+This also fixes a performance bug. `assets/icons/index.js` exports
+`headerLogo` from `Design-10.png`, so the Nav and Footer currently render a
+**7MB macro photograph** as a 64px circular logo, on every route. That is
+almost certainly the heaviest single cost on the page, and it explains why the
+logo reads as an unidentifiable green smear — a photograph has no silhouette
+at 64px. The SVG mark replaces it at 417 bytes.
+
+`header-logo.png` (a mossy stone illustration) is orphaned — nothing imports
+it. Both `icons8-moss-color-*.png` files are retired too: beyond being raster
+and unable to recolour, they are third-party clip art whose free licence
+requires visible attribution.
 
 ### Hero image
 

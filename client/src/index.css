@@ -1,45 +1,91 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
-
-
-@theme {
-  --color-slate-gray: #6b7280;
-  --color-pale-green: #d9f2de;
-  --color-light-green: #4caf50;
-  --color-dark-green: #256d34;
-  --color-moss-green: #3a8d46;
-  --color-bg-color: #65b372;
-  --color-text-accent: #2f2776;
-  --color-primary-green: #137957;
-  --color-bg-green: #b2edbc;
-  --font-playfair: "Playfair", serif;
-  --font-poppins: "Poppins", sans-serif;
-  --font-montserrat: "Montserrat", sans-serif;
-  --font-palanquin: "Palanquin", sans-serif;
-  --font-size-sm: [14px, 20px];
-  --font-size-base: [16px, 19.5px];
-  --font-size-xs: [12px, 16px];
-  --font-size-lg: [18px, 21.94px];
-  --font-size-xl: [20px, 24.38px];
-  --font-size-2xl: [24px, 29.26px];
-  --font-size-3xl: [28px, 50px];
-  --font-size-4xl: [48px, 58px];
-  --font-size-8xl: [96px, 106px];
-  --screen-wide: 1440px;
-  --background-image-hero: url("/src/assets/images/mossCloseup.jpg");
-  --shadow-3xl: 0 10px 40px rgba(0, 0, 0, 0.1);
-}
+/* Runtime-swappable palette. @theme inline below points Tailwind's colour
+   utilities at these variables, so changing data-theme restyles everything
+   without any component knowing a theme exists. */
 @layer base {
+  :root {
+    --bg: #121815;
+    --surface: #1a221e;
+    --raised: #232c27;
+    --border: #2e3833;
+    --accent: #a3bfa8;
+    --accent-strong: #c2d6c4;
+    --stone: #5c6b61;
+    --text: #e8ebe6;
+    --text-muted: #9aa89e;
+    --on-accent: #121815;
+  }
+
+  [data-theme="light"] {
+    --bg: #f4f2ed;
+    --surface: #fbfaf7;
+    --raised: #ffffff;
+    --border: #dfe0d9;
+    --accent: #4a5f50;
+    --accent-strong: #35473b;
+    --stone: #8a9689;
+    --text: #1c221e;
+    --text-muted: #5f6b63;
+    --on-accent: #ffffff;
+  }
+
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+  }
+
+  html {
     scroll-behavior: smooth;
   }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Every interactive element gets a visible focus ring. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-stone: var(--stone);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-on-accent: var(--on-accent);
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --text-eyebrow: 0.72rem;
+  --text-hero: clamp(2.75rem, 1.6rem + 5.2vw, 6rem);
+  --text-display: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+  --text-title: clamp(1.35rem, 1.2rem + 0.8vw, 1.85rem);
+
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer components {
@@ -48,57 +94,17 @@
     margin: 0 auto;
   }
 
-  .input {
-    @apply sm:flex-1 max-sm:w-full text-base leading-normal text-text-accent pl-5 max-sm:p-5 outline-none sm:border-none border max-sm:border-text-accent max-sm:rounded-full font-montserrat;
+  .eyebrow {
+    @apply text-[length:var(--text-eyebrow)] uppercase tracking-[0.18em] text-text-muted;
+  }
+
+  .card-surface {
+    @apply bg-surface border border-border rounded-2xl;
   }
 }
 
 @layer utilities {
-  .padding {
-    @apply sm:px-16 px-8 sm:py-24 py-12;
-  }
-
-  .padding-x {
-    @apply sm:px-16 px-8;
-  }
-
-  .padding-y {
-    @apply sm:py-24 py-12;
-  }
-
-  .padding-l {
-    @apply sm:pl-16 pl-8;
-  }
-
-  .padding-r {
-    @apply sm:pr-16 pr-8;
-  }
-
-  .padding-t {
-    @apply sm:pt-24 pt-12;
-  }
-
-  .padding-b {
-    @apply sm:pb-24 pb-12;
-  }
-
-  .info-text {
-    @apply font-montserrat text-text-accent/80 text-lg leading-7;
-  }
-
-  .shadow-3xl {
-    box-shadow: var(--shadow-3xl);
-  }
-
-  .bg-hero {
-    background-image: var(--background-image-hero);
-    background-size: cover;
-    background-position: center;
-    /* background-repeat: no-repeat; */
-    /* background-attachment: fixed; */
-  }
-
-  .max-w-wide {
-    max-width: var(--screen-wide);
-  }
+  .padding-x { @apply sm:px-16 px-6; }
+  .padding-y { @apply sm:py-24 py-14; }
+  .padding   { @apply sm:px-16 px-6 sm:py-24 py-14; }
 }

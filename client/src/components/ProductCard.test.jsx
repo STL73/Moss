@@ -1,0 +1,54 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import ProductCard from './ProductCard';
+
+const product = {
+    id: '1', slug: 'kivi-sphere', name: 'Kivi Sphere', species: 'Cladonia stellaris',
+    price: 8500, images: ['a.jpg'], category: 'moss-pots', stock: 6, isAvailable: true,
+};
+
+const renderCard = (onAdd = vi.fn()) =>
+    render(<MemoryRouter><ProductCard product={product} onAdd={onAdd} /></MemoryRouter>);
+
+describe('ProductCard', () => {
+    beforeEach(() => window.localStorage.clear());
+
+    it('links to the product page', () => {
+        renderCard();
+        expect(screen.getByRole('link', { name: /kivi sphere/i })).toHaveAttribute('href', '/products/kivi-sphere');
+    });
+
+    it('shows the formatted price', () => {
+        renderCard();
+        expect(screen.getByText('£85.00')).toBeInTheDocument();
+    });
+
+    it('shows the species', () => {
+        renderCard();
+        expect(screen.getByText('Cladonia stellaris')).toBeInTheDocument();
+    });
+
+    it('calls onAdd without navigating', async () => {
+        const onAdd = vi.fn();
+        const user = userEvent.setup();
+        renderCard(onAdd);
+        await user.click(screen.getByRole('button', { name: /add kivi sphere/i }));
+        expect(onAdd).toHaveBeenCalledWith(product);
+    });
+
+    it('gives the image meaningful alt text', () => {
+        renderCard();
+        expect(screen.getByAltText('Kivi Sphere')).toBeInTheDocument();
+    });
+
+    // An <a> may not contain interactive descendants. The card stays clickable
+    // via a stretched pseudo-element on the title link instead.
+    it('keeps the add button outside the link', () => {
+        renderCard();
+        const link = screen.getByRole('link', { name: /kivi sphere/i });
+        const addButton = screen.getByRole('button', { name: /add kivi sphere/i });
+        expect(link.contains(addButton)).toBe(false);
+    });
+});

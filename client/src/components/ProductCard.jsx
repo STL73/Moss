@@ -1,31 +1,54 @@
-const ProductCard = ({ imgURL, changeBigProductImage, bigProductImg }) => {
-  const handleClick = () => {
-    if (bigProductImg !== imgURL.bigProduct) {
-      changeBigProductImage(imgURL);
-    }
-  };
-  return (
-    <div
-      className={`border-2 rounded-xl ${bigProductImg === imgURL.bigProduct ? "border-primary-green" : "border-transparent"}
-        cursor-pointer max-sm:flex-1`}
-      onClick={handleClick}
+import { Link } from 'react-router';
+import { motion } from 'motion/react';
+import { formatPrice } from '../utils/formatPrice';
+
+// The title link is stretched over the whole card with an ::after overlay, so
+// the card is clickable without nesting the Add button inside an anchor —
+// which would be invalid HTML and would break screen-reader navigation.
+// The Add button sits above that overlay on its own stacking level.
+const ProductCard = ({ product, onAdd }) => (
+    <motion.div
+        layout
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+        whileHover={{ y: -6 }}
+        className="card-surface relative p-3 h-full group
+                   hover:border-stone transition-colors duration-300"
     >
-      <div
-        className="flex
-        justify-center items-center bg-bg-color
-         bg-center bg-cover sm:w-36
-        sm:h-36 rounded-xl max-sm:p-4"
-      >
         <img
-          src={imgURL.thumbnail}
-          alt="product thumbnail"
-          // width={80}
-          // height={80}
-          className=" w-30 h-30 object-cover rounded-xl"
+            src={product.images[0]}
+            alt={product.name}
+            loading="lazy"
+            className="w-full aspect-square object-cover rounded-xl"
         />
-      </div>
-    </div>
-  );
-};
+        <div className="px-1 pt-4 pb-1">
+            <div className="flex justify-between items-baseline gap-3">
+                <h3 className="text-[0.95rem] font-medium">
+                    <Link
+                        to={`/products/${product.slug}`}
+                        className="after:absolute after:inset-0 after:rounded-2xl
+                                   group-hover:text-accent transition-colors duration-200"
+                    >
+                        {product.name}
+                    </Link>
+                </h3>
+                <span className="text-accent font-medium">{formatPrice(product.price)}</span>
+            </div>
+            <p className="text-xs text-text-muted mt-1.5 italic">{product.species}</p>
+            <button
+                type="button"
+                onClick={() => onAdd(product)}
+                aria-label={`Add ${product.name} to basket`}
+                className="relative z-10 mt-4 ml-auto block px-5 py-2 rounded-full text-xs font-medium
+                           border border-border text-text cursor-pointer
+                           hover:border-stone hover:bg-raised transition-colors duration-200"
+            >
+                Add
+            </button>
+        </div>
+    </motion.div>
+);
 
 export default ProductCard;

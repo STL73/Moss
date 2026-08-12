@@ -1,5 +1,7 @@
 import { LuMail, LuPhone, LuClock } from 'react-icons/lu';
 import PageHeader from '../components/PageHeader';
+import PhotoBackdrop from '../components/PhotoBackdrop';
+import { moss8 } from '../assets/images';
 import { contactEmail, contactPhone, contactTel } from '../constants';
 
 // Deliberately no contact form. The API has no endpoint to receive one
@@ -123,24 +125,30 @@ const Contact = () => (
                 We reply to everything within one working day. Made and packed in Manchester.
             </p>
 
-            {sections.map((section) => (
-                <section key={section.id} id={section.id} className="pt-20 scroll-mt-28">
-                    <h2 className="font-display text-(length:--text-display) leading-tight">
-                        {section.title} <em className="text-accent italic">{section.accent}</em>
-                    </h2>
-                    <dl className="mt-8 flex flex-col gap-6 max-w-2xl">
-                        {section.items.map((item) => (
-                            <div key={item.q} className="border-t border-border pt-6">
-                                <dt className="font-medium">{item.q}</dt>
-                                <dd className="mt-2 text-text-muted leading-relaxed">{item.a}</dd>
-                            </div>
-                        ))}
-                    </dl>
-                </section>
-            ))}
-
-            <div className="h-24" />
         </div>
+
+        {/* One backdrop behind all three question sections rather than one
+            each: three photographs down a single page would read as wallpaper,
+            and the scrim only has to be established once. */}
+        <PhotoBackdrop image={moss8} className="mt-20">
+            <div className="max-container padding-x pb-24">
+                {sections.map((section) => (
+                    <section key={section.id} id={section.id} className="pt-20 scroll-mt-28">
+                        <h2 className="font-display text-(length:--text-display) leading-tight text-balance">
+                            {section.title} <em className="text-accent italic">{section.accent}</em>
+                        </h2>
+                        <dl className="mt-8 flex flex-col gap-6 max-w-2xl">
+                            {section.items.map((item) => (
+                                <div key={item.q} className="border-t border-border pt-6">
+                                    <dt className="font-medium">{item.q}</dt>
+                                    <dd className="mt-2 text-text-muted leading-relaxed text-pretty">{item.a}</dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </section>
+                ))}
+            </div>
+        </PhotoBackdrop>
     </>
 );
 

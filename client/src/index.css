@@ -24,6 +24,13 @@
     /* The boundary of anything you can click. WCAG 1.4.11 wants 3:1 against
        whatever it sits on; this clears it against bg, surface and raised. */
     --border-interactive: #74877a;
+    /* Photography treatment. A scrim over a dark photo on a dark page muddies
+       both, so the image is lifted rather than the scrim thinned — thinning it
+       would cost text contrast. */
+    --photo-filter: brightness(1.18) saturate(1.06);
+    --photo-scrim-hold: 96%;   /* opacity where text sits */
+    --photo-scrim-mid: 78%;    /* midpoint of the falloff */
+    --photo-scrim-far: 22%;    /* opacity at the far edge */
     --accent: #a3bfa8;
     --accent-strong: #c2d6c4;
     --stone: #5c6b61;
@@ -40,6 +47,14 @@
     --raised: #ffffff;
     --border: #dfe0d9;
     --border-interactive: #767f77;
+    /* A near-white scrim washes a photo to milk long before it reaches the
+       opacity text needs. So: hold full opacity only where text actually sits,
+       fall away fast, and push contrast and saturation back into the image to
+       stop the exposed part reading as pale. */
+    --photo-filter: contrast(1.1) saturate(1.14) brightness(0.94);
+    --photo-scrim-hold: 97%;
+    --photo-scrim-mid: 62%;
+    --photo-scrim-far: 4%;
     --accent: #4a5f50;
     --accent-strong: #35473b;
     --stone: #8a9689;
@@ -119,6 +134,30 @@
 
   .card-surface {
     @apply bg-surface border border-border rounded-2xl;
+  }
+
+  /* Photography that has to carry text. The scrim holds near-solid page colour
+     across the text column, then releases the image. Both curves are tuned per
+     theme by the --photo-scrim-* tokens: a near-white wash reads as pale long
+     before it reaches the opacity text needs, so light falls away far faster
+     than dark does.
+
+     Used only where text sits on a photograph. Where nothing has to stay
+     readable, the photograph is left alone. */
+  .photo-scrim {
+    background: linear-gradient(
+      100deg,
+      var(--bg) 0%,
+      color-mix(in oklab, var(--bg) var(--photo-scrim-hold), transparent) 34%,
+      color-mix(in oklab, var(--bg) var(--photo-scrim-mid), transparent) 62%,
+      color-mix(in oklab, var(--bg) var(--photo-scrim-far), transparent) 100%
+    );
+  }
+
+  /* Lifts a dark photograph on the dark theme, and puts contrast back into one
+     the light scrim would otherwise flatten. */
+  .photo-filter {
+    filter: var(--photo-filter);
   }
 }
 

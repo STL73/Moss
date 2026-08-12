@@ -54,9 +54,11 @@
     box-sizing: border-box;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
+  /* No global scroll-behavior. It applied to programmatic scrolling too, so
+     every route change animated the full page height — leaving the bottom of
+     /products for /contact was a visible one-second scroll. ScrollToHash now
+     picks the behaviour per navigation: instant for a route reset, smooth only
+     when moving to an in-page anchor. */
 
   body {
     background: var(--bg);
@@ -73,7 +75,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;

@@ -57,16 +57,21 @@ const Products = () => {
                     count={products.length}
                 />
 
+                {/* AnimatePresence has to outlive the loading swap. Inside the
+                    ternary it unmounts on every filter change, taking the cards'
+                    exit animation with it — the one case it exists to cover.
+                    Skeleton keys are namespaced so React never reconciles a
+                    skeleton against a card. */}
                 <div className="mt-12 pb-24 grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5">
-                    {loading ? (
-                        Array.from({ length: 6 }, (_, index) => <ProductCardSkeleton key={index} />)
-                    ) : (
-                        <AnimatePresence mode="popLayout">
-                            {products.map((product) => (
+                    <AnimatePresence mode="popLayout" initial={false}>
+                        {loading
+                            ? Array.from({ length: 6 }, (_, index) => (
+                                <ProductCardSkeleton key={`skeleton-${index}`} />
+                            ))
+                            : products.map((product) => (
                                 <ProductCard key={product.id} product={product} onAdd={addItem} />
                             ))}
-                        </AnimatePresence>
-                    )}
+                    </AnimatePresence>
                 </div>
             </div>
         </>

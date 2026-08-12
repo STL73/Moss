@@ -1,20 +1,83 @@
-import { LuSun, LuMoon } from 'react-icons/lu';
+import { motion } from 'motion/react';
 import { useTheme } from '../hooks/useTheme';
+import SunMoon from './SunMoon';
 
+const SLOT = 18;      // horizontal distance from centre to each resting place
+const ARC = 9;        // how far above or below the line each one travels
+const TRAVEL = 0.66;  // seconds end to end
+
+const EASE = [0.16, 1, 0.3, 1];
+
+// Three keyframes make the curve: start, apex, finish. The horizontal midpoint
+// is the centre of the control, so the apex falls exactly halfway.
+const arc = (from, to, lift) => ({ x: [from, 0, to], y: [0, lift, 0] });
+
+// The sun is light and the moon is dark, permanently. Only their positions and
+// their emphasis change; the symbols themselves never do.
+const OPTIONS = [
+    { value: 'light', shape: 'sun' },
+    { value: 'dark', shape: 'moon' },
+];
+
+/**
+ * Two controls, one per theme, arranged as a horizon.
+ *
+ * The theme in use rests on the left and is lit; the one a press away rests on
+ * the right, dimmed. Choosing the other sends them along opposite arcs, the
+ * incoming one rising over the top as the outgoing one sets beneath, so they
+ * trade places without ever occupying the same point.
+ *
+ * Pressing the theme already in use does nothing. The active option keeps
+ * aria-pressed and stays focusable but carries aria-disabled: a real disabled
+ * attribute would remove it from the tab order and stop a keyboard user
+ * discovering which theme is on.
+ */
 const ThemeToggle = () => {
-    const { theme, toggleTheme } = useTheme();
-    const next = theme === 'dark' ? 'light' : 'dark';
+    const { theme, selectTheme } = useTheme();
+
+    const glide = {
+        duration: TRAVEL,
+        ease: EASE,
+        // Eased separately so the rise feels weighted rather than linear
+        // against the horizontal travel.
+        y: { duration: TRAVEL, ease: 'easeInOut' },
+    };
 
     return (
-        <button
-            type="button"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${next} theme`}
-            className="p-2 rounded-full text-text-muted hover:text-text
-                       transition-colors duration-200 cursor-pointer"
-        >
-            {theme === 'dark' ? <LuSun size={18} /> : <LuMoon size={18} />}
-        </button>
+        <div role="group" aria-label="Theme" className="relative h-11 w-[4.5rem]">
+            {OPTIONS.map(({ value, shape }) => {
+                const active = theme === value;
+
+                return (
+                    <motion.button
+                        key={value}
+                        type="button"
+                        aria-label={`Use ${value} theme`}
+                        aria-pressed={active}
+                        aria-disabled={active || undefined}
+                        onClick={() => selectTheme(value)}
+                        initial={false}
+                        // Active rests left and travels over the top; available
+                        // rests right and passes underneath.
+                        animate={arc(
+                            active ? SLOT : -SLOT,
+                            active ? -SLOT : SLOT,
+                            active ? -ARC : ARC
+                        )}
+                        transition={glide}
+                        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                                    size-8 grid place-items-center rounded-full
+                                    transition-colors duration-200 ${
+                            active
+                                ? 'text-accent cursor-default'
+                                : 'text-text-muted/45 hover:text-text-muted cursor-pointer'
+                        }`}
+                    >
+                        <SunMoon shape={shape} />
+                    </motion.button>
+                );
+            })}
+        </div>
     );
 };
 

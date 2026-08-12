@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { ThemeContext } from '../hooks/useTheme';
@@ -45,8 +45,25 @@ export const ThemeProvider = ({ children }) => {
         [withTransition, setTheme]
     );
 
+    // Choosing a theme by name rather than flipping to the other one. The
+    // toggle presents both options at once, so "make it light" has to be
+    // expressible without knowing what it currently is.
+    //
+    // The current value is read from a ref rather than from `theme` so this
+    // keeps one identity for the life of the provider — consumers put it in
+    // effect dependency arrays, and a callback that changed on every theme
+    // change would re-run them. Same reasoning as the cart actions.
+    const currentTheme = useRef(theme);
+    useEffect(() => { currentTheme.current = theme; }, [theme]);
+
+    const selectTheme = useCallback((next) => {
+        // Already there: no state write, and no pointless crossfade.
+        if (currentTheme.current === next) return;
+        withTransition(() => setTheme(next));
+    }, [withTransition, setTheme]);
+
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme, toggleTheme, selectTheme }}>
             {children}
         </ThemeContext.Provider>
     );

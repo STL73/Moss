@@ -12,8 +12,16 @@ const sample = {
 };
 
 const Trigger = () => {
-    const { addItem } = useCart();
-    return <button onClick={() => addItem(sample)}>trigger add</button>;
+    const { addItem, removeItem } = useCart();
+    return (
+        <>
+            <button onClick={() => addItem(sample)}>trigger add</button>
+            {/* Removing from outside the panel keeps the clicked button mounted,
+                so focus afterwards is attributable to the drawer, not to the
+                button vanishing from under the cursor. */}
+            <button onClick={() => removeItem(sample.id)}>trigger remove</button>
+        </>
+    );
 };
 
 const setup = () =>
@@ -65,5 +73,28 @@ describe('CartDrawer', () => {
         setup();
         await user.click(screen.getByText('trigger add'));
         expect(screen.getByText('£85.00')).toBeInTheDocument();
+    });
+
+    it('moves focus into the panel when it opens', async () => {
+        const user = userEvent.setup();
+        setup();
+        await user.click(screen.getByText('trigger add'));
+        expect(screen.getByRole('dialog', { name: /basket/i })).toHaveFocus();
+    });
+
+    // The panel focuses itself on open. If the context hands back a fresh
+    // closeDrawer on every cart change, that effect re-runs and drags focus
+    // back to the panel mid-interaction — every removal, and again when the
+    // toast clears.
+    it('does not pull focus back to the panel when the cart changes', async () => {
+        const user = userEvent.setup();
+        setup();
+        await user.click(screen.getByText('trigger add'));
+
+        const removeTrigger = screen.getByText('trigger remove');
+        await user.click(removeTrigger);
+
+        expect(removeTrigger).toHaveFocus();
+        expect(screen.getByRole('dialog', { name: /basket/i })).not.toHaveFocus();
     });
 });

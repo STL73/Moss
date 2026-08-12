@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useMemo, useState, useRef } from 'react';
+import { useReducer, useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { CartContext } from '../hooks/useCart';
 
 const STORAGE_KEY = 'cart';
@@ -56,34 +56,52 @@ export const CartProvider = ({ children }) => {
     const [toast, setToast] = useState(null);
     const toastTimer = useRef(null);
 
-    const showToast = (message) => {
+    // Every action below keeps a stable identity for the life of the provider.
+    // Consumers put these in effect dependency arrays — CartDrawer lists
+    // closeDrawer and focuses its panel — so an identity that changed whenever
+    // the cart or toast changed would re-run those effects and steal focus
+    // mid-interaction. dispatch and the setState functions are already stable,
+    // which is what lets the dependency lists stay empty.
+    const showToast = useCallback((message) => {
         clearTimeout(toastTimer.current);
         setToast(message);
         toastTimer.current = setTimeout(() => setToast(null), 2600);
-    };
+    }, []);
 
     // A pending timer must not fire after the provider unmounts.
     useEffect(() => () => clearTimeout(toastTimer.current), []);
+
+    const openDrawer = useCallback(() => setDrawerOpen(true), []);
+    const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+
+    // Adding always reveals the basket, so the result of the action is
+    // visible without the user going looking for it.
+    const addItem = useCallback((product, quantity = 1) => {
+        dispatch({ type: 'ADD_ITEM', product, quantity });
+        setDrawerOpen(true);
+        showToast(`${product.name} added to basket`);
+    }, [showToast]);
+
+    const removeItem = useCallback((id) => dispatch({ type: 'REMOVE_ITEM', id }), []);
+    const setQuantity = useCallback(
+        (id, quantity) => dispatch({ type: 'SET_QUANTITY', id, quantity }),
+        []
+    );
+    const clear = useCallback(() => dispatch({ type: 'CLEAR' }), []);
 
     const value = useMemo(() => ({
         items,
         itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
         total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
         drawerOpen,
-        openDrawer: () => setDrawerOpen(true),
-        closeDrawer: () => setDrawerOpen(false),
+        openDrawer,
+        closeDrawer,
         toast,
-        // Adding always reveals the basket, so the result of the action is
-        // visible without the user going looking for it.
-        addItem: (product, quantity = 1) => {
-            dispatch({ type: 'ADD_ITEM', product, quantity });
-            setDrawerOpen(true);
-            showToast(`${product.name} added to basket`);
-        },
-        removeItem: (id) => dispatch({ type: 'REMOVE_ITEM', id }),
-        setQuantity: (id, quantity) => dispatch({ type: 'SET_QUANTITY', id, quantity }),
-        clear: () => dispatch({ type: 'CLEAR' }),
-    }), [items, drawerOpen, toast]);
+        addItem,
+        removeItem,
+        setQuantity,
+        clear,
+    }), [items, drawerOpen, toast, openDrawer, closeDrawer, addItem, removeItem, setQuantity, clear]);
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

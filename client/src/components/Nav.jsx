@@ -5,11 +5,15 @@ import { LuMenu, LuX, LuShoppingBasket } from 'react-icons/lu';
 import Logo from './Logo';
 import ThemeToggle from './ThemeToggle';
 import { useCart } from '../hooks/useCart';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { navLinks } from '../constants';
 
 const Nav = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const { itemCount, openDrawer } = useCart();
+
+    // The panel claims aria-modal, so focus has to actually behave modally.
+    const menuRef = useFocusTrap(menuOpen);
 
     // Escape closes the menu, and the body must not scroll behind it.
     useEffect(() => {
@@ -91,6 +95,8 @@ const Nav = () => {
                             className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                         />
                         <motion.div
+                            ref={menuRef}
+                            tabIndex={-1}
                             role="dialog"
                             aria-modal="true"
                             aria-label="Site menu"
@@ -99,7 +105,7 @@ const Nav = () => {
                             exit={{ x: '100%' }}
                             transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
                             className="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm z-50
-                                       bg-surface border-l border-border p-6 lg:hidden"
+                                       bg-surface border-l border-border p-6 lg:hidden outline-none"
                         >
                             <button
                                 type="button"

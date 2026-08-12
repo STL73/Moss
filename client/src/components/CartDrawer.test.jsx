@@ -82,6 +82,17 @@ describe('CartDrawer', () => {
         expect(screen.getByRole('dialog', { name: /basket/i })).toHaveFocus();
     });
 
+    it('returns focus to whatever opened it', async () => {
+        const user = userEvent.setup();
+        setup();
+
+        const trigger = screen.getByText('trigger add');
+        await user.click(trigger);
+        await user.click(screen.getByRole('button', { name: /close basket/i }));
+
+        await waitFor(() => expect(trigger).toHaveFocus());
+    });
+
     // The panel focuses itself on open. If the context hands back a fresh
     // closeDrawer on every cart change, that effect re-runs and drags focus
     // back to the panel mid-interaction — every removal, and again when the

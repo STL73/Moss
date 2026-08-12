@@ -1,17 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { LuX } from 'react-icons/lu';
 import { useCart } from '../hooks/useCart';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { formatPrice } from '../utils/formatPrice';
 import Button from './Button';
 
 const CartDrawer = () => {
     const { items, total, itemCount, drawerOpen, closeDrawer, removeItem } = useCart();
-    const panelRef = useRef(null);
 
-    // Escape closes, the body must not scroll, and focus moves into the panel
-    // so keyboard users are not left behind on the page.
+    // Focus in on open, contained while open, back to the trigger on close.
+    const panelRef = useFocusTrap(drawerOpen);
+
+    // Escape closes, and the body must not scroll behind the panel.
     useEffect(() => {
         if (!drawerOpen) return;
         const onKeyDown = (event) => {
@@ -19,7 +21,6 @@ const CartDrawer = () => {
         };
         document.addEventListener('keydown', onKeyDown);
         document.body.style.overflow = 'hidden';
-        panelRef.current?.focus();
         return () => {
             document.removeEventListener('keydown', onKeyDown);
             document.body.style.overflow = '';

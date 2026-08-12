@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router';
+import { useParams, useLocation, Link } from 'react-router';
 import { LuTruck, LuDroplets, LuHandHeart } from 'react-icons/lu';
 import { getProduct, getRelated } from '../lib/api';
 import { useCart } from '../hooks/useCart';
@@ -22,6 +22,7 @@ const ProductDetailView = ({ slug }) => {
     const [quantity, setQuantity] = useState(1);
     const [status, setStatus] = useState('loading');
     const { addItem } = useCart();
+    const { search } = useLocation();
 
     useEffect(() => {
         let active = true;
@@ -57,7 +58,17 @@ const ProductDetailView = ({ slug }) => {
         <>
             <nav aria-label="Breadcrumb" className="max-container padding-x pt-10">
                 <ol className="flex gap-2 text-sm text-text-muted">
-                    <li><Link to="/products" className="hover:text-text transition-colors">Shop</Link></li>
+                    {/* Carries the query the customer arrived with, so going
+                        back lands on the filtered, sorted list they left rather
+                        than the full catalogue. */}
+                    <li>
+                        <Link
+                            to={{ pathname: '/products', search }}
+                            className="hover:text-text transition-colors"
+                        >
+                            Shop
+                        </Link>
+                    </li>
                     <li aria-hidden="true">/</li>
                     <li className="text-text">{product.name}</li>
                 </ol>

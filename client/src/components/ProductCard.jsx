@@ -1,12 +1,15 @@
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { motion } from 'motion/react';
 import { formatPrice } from '../utils/formatPrice';
 
 // The title link is stretched over the whole card with an ::after overlay, so
-// the card is clickable without nesting the Add button inside an anchor вЂ”
+// the card is clickable without nesting the Add button inside an anchor —
 // which would be invalid HTML and would break screen-reader navigation.
 // The Add button sits above that overlay on its own stacking level.
-const ProductCard = ({ product, onAdd }) => (
+const ProductCard = ({ product, onAdd }) => {
+    const { search } = useLocation();
+
+    return (
     <motion.div
         layout
         initial={{ opacity: 0, y: 12 }}
@@ -27,7 +30,10 @@ const ProductCard = ({ product, onAdd }) => (
             <div className="flex justify-between items-baseline gap-3">
                 <h3 className="text-[0.95rem] font-medium">
                     <Link
-                        to={`/products/${product.slug}`}
+                        // Carrying the query forward is what lets the product
+                        // page send the customer back to the list they were
+                        // actually browsing, filters and sort intact.
+                        to={{ pathname: `/products/${product.slug}`, search }}
                         className="after:absolute after:inset-0 after:rounded-2xl
                                    group-hover:text-accent transition-colors duration-200"
                     >
@@ -49,6 +55,7 @@ const ProductCard = ({ product, onAdd }) => (
             </button>
         </div>
     </motion.div>
-);
+    );
+};
 
 export default ProductCard;

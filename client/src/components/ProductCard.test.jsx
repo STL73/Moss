@@ -20,6 +20,20 @@ describe('ProductCard', () => {
         expect(screen.getByRole('link', { name: /kivi sphere/i })).toHaveAttribute('href', '/products/kivi-sphere');
     });
 
+    // The product page reads this query back into its breadcrumb, so a customer
+    // who filters, opens a piece and goes back lands on the list they left
+    // rather than the full catalogue.
+    it('carries the current filter query into the product link', () => {
+        render(
+            <MemoryRouter initialEntries={['/products?category=wreaths&sort=price-asc']}>
+                <ProductCard product={product} onAdd={vi.fn()} />
+            </MemoryRouter>
+        );
+
+        expect(screen.getByRole('link', { name: /kivi sphere/i }))
+            .toHaveAttribute('href', '/products/kivi-sphere?category=wreaths&sort=price-asc');
+    });
+
     it('shows the formatted price', () => {
         renderCard();
         expect(screen.getByText('£85.00')).toBeInTheDocument();

@@ -89,7 +89,23 @@
     border-radius: 4px;
   }
 
+  /* The theme swap, crossfaded by the compositor. Finally puts --ease-out-soft
+     to work: it was defined and referenced nowhere. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 340ms;
+    animation-timing-function: var(--ease-out-soft);
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    /* Belt and braces. ThemeProvider already skips startViewTransition
+       entirely under reduced motion, so this only catches a transition
+       started before the preference changed. */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+    }
+
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;

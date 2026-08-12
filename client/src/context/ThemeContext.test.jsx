@@ -43,4 +43,49 @@ describe('ThemeContext', () => {
         expect(screen.getByRole('button')).toHaveTextContent('light');
         expect(document.documentElement.getAttribute('data-theme')).toBe('light');
     });
+
+    // jsdom has no startViewTransition, so the tests above already prove the
+    // unsupported-browser path works. These cover the rest of the matrix.
+    describe('view transition', () => {
+        const withViewTransitions = () => {
+            const spy = vi.fn((callback) => {
+                callback();
+                return { finished: Promise.resolve(), ready: Promise.resolve() };
+            });
+            document.startViewTransition = spy;
+            return spy;
+        };
+
+        it('crossfades the swap where the browser supports it', () => {
+            const spy = withViewTransitions();
+            renderWithProvider();
+
+            act(() => screen.getByRole('button').click());
+
+            expect(spy).toHaveBeenCalledOnce();
+            expect(screen.getByRole('button')).toHaveTextContent('light');
+            expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+
+            delete document.startViewTransition;
+        });
+
+        // Animating a whole-page colour change is exactly what someone with a
+        // vestibular trigger has asked not to see.
+        it('swaps instantly when reduced motion is requested', () => {
+            const spy = withViewTransitions();
+            window.matchMedia = vi.fn().mockImplementation((query) => ({
+                matches: query.includes('reduced-motion'),
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn(),
+            }));
+            renderWithProvider();
+
+            act(() => screen.getByRole('button').click());
+
+            expect(spy).not.toHaveBeenCalled();
+            expect(screen.getByRole('button')).toHaveTextContent('light');
+
+            delete document.startViewTransition;
+        });
+    });
 });

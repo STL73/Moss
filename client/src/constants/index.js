@@ -14,6 +14,23 @@ export const navLinks = [
     { to: '/contact', label: 'Contact' },
 ];
 
+// PLACEHOLDER — none of these figures have been verified with the client.
+// "3k Customers" in particular is a claim about the business, not a design
+// detail, and publishing it unverified is a commercial risk rather than a
+// cosmetic one. The suffixes are claims too: "Ethically foraged" and "UK-wide
+// delivery" both need confirming.
+//
+// Before launch: replace with numbers the client can substantiate, or delete
+// the stats band from Hero entirely. Hero renders a visible marker over these
+// in development so they cannot be forgotten; that marker is stripped from
+// production builds, so this comment is the only thing standing between these
+// values and a live site.
+export const PLACEHOLDER_STATS = [
+    { value: '12', label: 'Species', suffix: 'Ethically foraged' },
+    { value: '200+', label: 'Pieces', suffix: 'Made by hand' },
+    { value: '3k', label: 'Customers', suffix: 'UK-wide delivery' },
+];
+
 export const footerLinks = [
     {
         title: 'Collections',

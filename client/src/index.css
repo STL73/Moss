@@ -10,6 +10,11 @@
    without any component knowing a theme exists. */
 @layer base {
   :root {
+    /* Tells the browser to render native UI — the sort <select> popup, scrollbars,
+       form controls — in dark chrome. Without it a near-white option list renders
+       on a white popup background. */
+    color-scheme: dark;
+
     --bg: #121815;
     --surface: #1a221e;
     --raised: #232c27;
@@ -23,6 +28,8 @@
   }
 
   [data-theme="light"] {
+    color-scheme: light;
+
     --bg: #f4f2ed;
     --surface: #fbfaf7;
     --raised: #ffffff;

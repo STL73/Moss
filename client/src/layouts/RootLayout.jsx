@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import CartDrawer from '../components/CartDrawer';
 import Toast from '../components/Toast';
 import ScrollToHash from '../components/ScrollToHash';
+import BackToTop from '../components/BackToTop';
 
 // Motion drives its animations through the Web Animations API, which the
 // prefers-reduced-motion block in index.css cannot reach — that block only
@@ -21,6 +22,9 @@ const RootLayout = () => (
             <Footer />
             <CartDrawer />
             <Toast />
+            {/* Renders nothing until the page is scrolled, so short routes
+                never show it. */}
+            <BackToTop />
         </div>
     </MotionConfig>
 );

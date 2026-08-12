@@ -18,6 +18,7 @@ vi.mock('../components/Footer', () => ({ default: () => <footer /> }));
 vi.mock('../components/CartDrawer', () => ({ default: () => null }));
 vi.mock('../components/Toast', () => ({ default: () => null }));
 vi.mock('../components/ScrollToHash', () => ({ default: () => null }));
+vi.mock('../components/BackToTop', () => ({ default: () => null }));
 
 const RootLayout = (await import('./RootLayout')).default;
 

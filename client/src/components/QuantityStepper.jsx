@@ -1,7 +1,7 @@
 import { LuMinus, LuPlus } from 'react-icons/lu';
 
 const QuantityStepper = ({ value, onChange, min = 1, max = 99 }) => (
-    <div className="inline-flex items-center gap-1 border border-border rounded-full p-1">
+    <div className="inline-flex items-center gap-1 border border-border-interactive rounded-full p-1">
         <button
             type="button"
             aria-label="Decrease quantity"

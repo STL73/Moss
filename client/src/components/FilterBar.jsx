@@ -15,7 +15,7 @@ const FilterBar = ({ active, onCategoryChange, sort, onSortChange, count }) => (
                                     transition-colors duration-200 ${
                             isActive
                                 ? 'bg-accent text-on-accent border-accent font-medium'
-                                : 'border-border text-text-muted hover:text-text hover:border-stone'
+                                : 'border-border-interactive text-text-muted hover:text-text hover:border-accent'
                         }`}
                     >
                         {category.name}
@@ -31,8 +31,8 @@ const FilterBar = ({ active, onCategoryChange, sort, onSortChange, count }) => (
                 id="sort"
                 value={sort}
                 onChange={(event) => onSortChange(event.target.value)}
-                className="bg-transparent border border-border rounded-full px-4 py-2
-                           text-sm text-text cursor-pointer hover:border-stone
+                className="bg-transparent border border-border-interactive rounded-full px-4 py-2
+                           text-sm text-text cursor-pointer hover:border-accent
                            transition-colors duration-200"
             >
                 <option value="newest">Newest</option>

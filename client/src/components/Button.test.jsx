@@ -29,9 +29,12 @@ describe('Button', () => {
         expect(screen.getByRole('button')).not.toHaveClass('w-full');
     });
 
+    // The outline variant is identified by nothing but its border, so it has to
+    // use the interactive token rather than the decorative one. See
+    // src/tokens.test.js for the contrast contract that token is held to.
     it('renders the outline variant', () => {
         render(<Button variant="outline">Add</Button>);
-        expect(screen.getByRole('button')).toHaveClass('border-border');
+        expect(screen.getByRole('button')).toHaveClass('border-border-interactive');
     });
 
     it('is disabled when asked', () => {

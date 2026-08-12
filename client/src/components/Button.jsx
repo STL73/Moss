@@ -3,7 +3,7 @@
 // buttons would shout.
 const VARIANTS = {
     solid: 'bg-accent text-on-accent hover:bg-accent-strong',
-    outline: 'border border-border text-text hover:border-stone hover:bg-surface',
+    outline: 'border border-border-interactive text-text hover:border-accent hover:bg-surface',
 };
 
 // `as` lets a navigation action render as a router Link while keeping the

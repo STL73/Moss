@@ -21,8 +21,8 @@ const Footer = () => (
                                 key={label}
                                 href={href}
                                 aria-label={label}
-                                className="size-9 rounded-full border border-border grid place-items-center
-                                           text-text-muted hover:text-accent hover:border-stone
+                                className="size-9 rounded-full border border-border-interactive grid place-items-center
+                                           text-text-muted hover:text-accent hover:border-accent
                                            transition-colors duration-200"
                             >
                                 <Icon size={15} />

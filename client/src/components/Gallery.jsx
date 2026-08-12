@@ -50,7 +50,7 @@ const Gallery = ({ images, alt }) => {
                             onClick={() => { setIndex(imageIndex); setZoomed(false); }}
                             className={`rounded-lg overflow-hidden border-2 cursor-pointer
                                         transition-colors duration-200 ${
-                                imageIndex === index ? 'border-accent' : 'border-transparent hover:border-border'
+                                imageIndex === index ? 'border-accent' : 'border-transparent hover:border-border-interactive'
                             }`}
                         >
                             <img src={image} alt="" className="w-full aspect-square object-cover" />

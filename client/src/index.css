@@ -18,7 +18,12 @@
     --bg: #121815;
     --surface: #1a221e;
     --raised: #232c27;
+    /* Decorative only — dividers, panel edges, card frames. Deliberately quiet,
+       and exempt from the 3:1 rule because it never identifies a control. */
     --border: #2e3833;
+    /* The boundary of anything you can click. WCAG 1.4.11 wants 3:1 against
+       whatever it sits on; this clears it against bg, surface and raised. */
+    --border-interactive: #74877a;
     --accent: #a3bfa8;
     --accent-strong: #c2d6c4;
     --stone: #5c6b61;
@@ -34,6 +39,7 @@
     --surface: #fbfaf7;
     --raised: #ffffff;
     --border: #dfe0d9;
+    --border-interactive: #767f77;
     --accent: #4a5f50;
     --accent-strong: #35473b;
     --stone: #8a9689;
@@ -81,6 +87,7 @@
   --color-surface: var(--surface);
   --color-raised: var(--raised);
   --color-border: var(--border);
+  --color-border-interactive: var(--border-interactive);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-stone: var(--stone);

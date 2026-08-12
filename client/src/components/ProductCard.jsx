@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { formatPrice } from '../utils/formatPrice';
 
 // The title link is stretched over the whole card with an ::after overlay, so
-// the card is clickable without nesting the Add button inside an anchor —
+// the card is clickable without nesting the Add button inside an anchor вЂ”
 // which would be invalid HTML and would break screen-reader navigation.
 // The Add button sits above that overlay on its own stacking level.
 const ProductCard = ({ product, onAdd }) => (
@@ -42,8 +42,8 @@ const ProductCard = ({ product, onAdd }) => (
                 onClick={() => onAdd(product)}
                 aria-label={`Add ${product.name} to basket`}
                 className="relative z-10 mt-4 ml-auto block px-5 py-2 rounded-full text-xs font-medium
-                           border border-border text-text cursor-pointer
-                           hover:border-stone hover:bg-raised transition-colors duration-200"
+                           border border-border-interactive text-text cursor-pointer
+                           hover:border-accent hover:bg-raised transition-colors duration-200"
             >
                 Add
             </button>

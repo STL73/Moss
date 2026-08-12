@@ -15,19 +15,28 @@ const Gallery = ({ images, alt }) => {
 
     return (
         <div>
-            <div
-                className="overflow-hidden rounded-2xl border border-border bg-surface"
-                onMouseMove={handleMove}
-                onMouseLeave={() => setZoomed(false)}
-            >
-                <img
-                    src={images[index]}
-                    alt={alt}
+            {/* A real button, not an onClick on the image: inspecting the piece
+                is the whole point of this component, so it has to be reachable
+                by keyboard and announced as a toggle. */}
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface">
+                <button
+                    type="button"
+                    aria-label={`Zoom ${alt}`}
+                    aria-pressed={zoomed}
                     onClick={() => setZoomed((value) => !value)}
-                    style={{ transformOrigin: origin }}
-                    className={`w-full aspect-square object-cover transition-transform duration-500
-                                ${zoomed ? 'scale-[1.8] cursor-zoom-out' : 'scale-100 cursor-zoom-in'}`}
-                />
+                    onMouseMove={handleMove}
+                    onMouseLeave={() => setZoomed(false)}
+                    className={`block w-full overflow-hidden
+                                ${zoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
+                >
+                    <img
+                        src={images[index]}
+                        alt={alt}
+                        style={{ transformOrigin: origin }}
+                        className={`w-full aspect-square object-cover transition-transform duration-500
+                                    ${zoomed ? 'scale-[1.8]' : 'scale-100'}`}
+                    />
+                </button>
             </div>
 
             {images.length > 1 && (

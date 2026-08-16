@@ -4,7 +4,7 @@ import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/rea
 import Button from '../components/Button';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { HERO_CLAIMS } from '../constants';
-import { moss1 as creekPlate, mossDolly as dollyPlate } from '../assets/images';
+import { creek as creekPlate, dropletPlate as dollyPlate } from '../assets/images';
 
 /**
  * A camera move in two shots, done without video.
@@ -17,7 +17,7 @@ import { moss1 as creekPlate, mossDolly as dollyPlate } from '../assets/images';
  * is 6–10 MB against a 2.2 MB bundle. This is two stills totalling 470 kB and
  * animates one transform, so the work stays on the compositor.
  *
- * mossDolly.webp is a wide re-cut of mossCloseup, which had been cropped so
+ * dropletPlate.webp is a wide re-cut of dropletMaster, which had been cropped so
  * tight it threw away the blurred background above the moss. The droplet sits
  * at 62% across and 45% down it; anchoring the transform there is what makes
  * the push read as a camera travelling towards the droplet rather than the
@@ -87,7 +87,7 @@ const Hero = () => {
     });
 
     const wideScale = useTransform(scrollYProgress, [0, CUT_AT], [1, 1.3]);
-    // 1.75, not more: mossDolly.webp is 2160px wide, and past this the droplet
+    // 1.75, not more: dropletPlate.webp is 2160px wide, and past this the droplet
     // stops being sharper than the screen it is drawn on. The second shot opens
     // at 1.15 so it is already moving when the cut lands, rather than starting
     // from rest and reading as a jump.

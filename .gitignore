@@ -40,3 +40,8 @@ graphify-out/
 memory/
 .superpowers/
 .stitch-preview/
+
+# Generated deliverables and audit artefacts. Kept out of the repo on
+# purpose: this is where contact sheets and exports land, and one of them
+# has already contained photographs that were being removed from history.
+outputs/

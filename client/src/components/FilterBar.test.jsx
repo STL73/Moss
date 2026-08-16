@@ -15,7 +15,7 @@ describe('FilterBar', () => {
     it('marks the active category', () => {
         render(<FilterBar {...props} />);
         expect(screen.getByRole('button', { name: 'All' })).toHaveAttribute('aria-pressed', 'true');
-        expect(screen.getByRole('button', { name: 'Wreaths' })).toHaveAttribute('aria-pressed', 'false');
+        expect(screen.getByRole('button', { name: 'Tabletop' })).toHaveAttribute('aria-pressed', 'false');
     });
 
     it('reports a category change', async () => {

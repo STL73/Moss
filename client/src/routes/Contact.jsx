@@ -1,7 +1,7 @@
 import { LuMail, LuPhone, LuClock } from 'react-icons/lu';
 import PageHeader from '../components/PageHeader';
 import PhotoBackdrop from '../components/PhotoBackdrop';
-import { moss8 } from '../assets/images';
+import { hillside } from '../assets/images';
 import { contactEmail, contactPhone, contactTel } from '../constants';
 
 // Deliberately no contact form. The API has no endpoint to receive one
@@ -129,7 +129,7 @@ const Contact = () => (
         {/* One backdrop behind all three question sections rather than one
             each: three photographs down a single page would read as wallpaper,
             and the scrim only has to be established once. */}
-        <PhotoBackdrop image={moss8} className="mt-20">
+        <PhotoBackdrop image={hillside} className="mt-20">
             <div className="max-container padding-x pb-24">
                 {sections.map((section) => (
                     <section key={section.id} id={section.id} className="pt-20 scroll-mt-28">

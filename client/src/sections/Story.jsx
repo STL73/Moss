@@ -1,18 +1,18 @@
 import { Link } from 'react-router';
 import { LuArrowRight } from 'react-icons/lu';
-import { mossHero } from '../assets/images';
+import { logArrangement } from '../assets/images';
 import PhotoBackdrop from '../components/PhotoBackdrop';
 
 // The photograph was a rounded card beside the copy, which read as an
 // illustration of the section. Full-bleed behind a scrim, it reads as the
 // setting the copy is describing.
 //
-// It was moss1 — the creek — until 2026-08-16. That photograph moved to the
+// It was the creek until 2026-08-16. That photograph moved to the
 // hero as the opening shot of the camera move, and this section took the wide
 // arrangement instead, which suits it better: "Our process" is about a finished
 // piece, not a hillside.
 const Story = () => (
-    <PhotoBackdrop image={mossHero}>
+    <PhotoBackdrop image={logArrangement}>
         <div id="about" className="max-container padding-x py-28 scroll-mt-24">
             <div className="max-w-184">
                 <p className="eyebrow">Our process</p>

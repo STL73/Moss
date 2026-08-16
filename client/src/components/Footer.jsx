@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import Logo from './Logo';
+import SpireforgeMark from './SpireforgeMark';
 import { footerLinks, socialMedia } from '../constants';
 
 const Footer = () => (
@@ -59,9 +60,31 @@ const Footer = () => (
                 </div>
             </div>
 
-            <p className="mt-16 pt-6 border-t border-border text-xs text-text-muted">
-                © {new Date().getFullYear()} MossArt. Handmade in Manchester.
-            </p>
+            {/* Two statements, not one sentence. The left is the shop talking
+                about itself; the right is who built the site. Running them
+                together reads as one claim and buries the credit. */}
+            <div className="mt-16 pt-6 border-t border-border flex justify-between items-center
+                            gap-4 flex-wrap text-xs text-text-muted">
+                <p>© {new Date().getFullYear()} MossArt. Handmade in Manchester.</p>
+                {/* A build credit nobody can click is decoration. This is the
+                    one link on the page that leaves the site, so it is a plain
+                    <a> rather than a router Link, and it stays in the same tab —
+                    forcing a new window on someone is a decision for them. */}
+                <p className="flex items-center gap-1.5">
+                    Site by
+                    {/* Mark and word inside the one anchor, so they light up
+                        together and there is a single tab stop rather than two
+                        links to the same place. */}
+                    <a
+                        href="https://spireforge.co.uk"
+                        className="inline-flex items-center gap-1.5 text-text hover:text-accent
+                                   transition-colors duration-200"
+                    >
+                        <SpireforgeMark />
+                        <span className="underline underline-offset-4">Spireforge</span>
+                    </a>
+                </p>
+            </div>
         </div>
     </footer>
 );

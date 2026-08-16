@@ -11,10 +11,12 @@ const systemPreference = () =>
 const prefersReducedMotion = () =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// Development only. The /lab theme sweep renders the same route twice in two
-// iframes, and both would otherwise read the one localStorage key and show the
-// same theme. Pinning it through the URL keeps the frames independent without
-// writing anything, so the sweep cannot change what the browser reopens on.
+// Development only. Opens a route pinned to a theme — `/products?theme=light` —
+// without touching localStorage, so checking both themes never changes the one
+// the browser reopens on. Built for the /lab theme sweep, which rendered a route
+// twice in two iframes that would otherwise have shared the one stored value;
+// that route is gone, but pinning a theme by URL is what you want any time the
+// app is being driven or screenshotted, so it stays.
 const forcedTheme = () => {
     if (!import.meta.env.DEV) return null;
     const requested = new URLSearchParams(window.location.search).get('theme');

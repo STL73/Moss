@@ -1,3 +1,5 @@
+import Photo from './Photo';
+
 /**
  * A section whose background is a photograph, with a scrim that guarantees the
  * text on top stays readable.
@@ -13,8 +15,11 @@
  */
 const PhotoBackdrop = ({ image, alt = '', children, className = '', priority = false }) => (
     <section className={`relative overflow-hidden ${className}`}>
-        <img
-            src={image}
+        <Photo
+            photo={image}
+            // Full-bleed: the section runs edge to edge at every breakpoint, so
+            // the drawn width is the viewport width.
+            sizes="100vw"
             // Decorative by default: the section's own heading and copy carry
             // the meaning, so an empty alt keeps it out of the accessibility
             // tree rather than making screen readers announce scenery. Pass alt

@@ -4,8 +4,7 @@ import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/rea
 import Button from '../components/Button';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { HERO_CLAIMS } from '../constants';
-import creekPlate from '../assets/images/mossCreek.webp';
-import dollyPlate from '../assets/images/mossDolly.webp';
+import { moss1 as creekPlate, mossDolly as dollyPlate } from '../assets/images';
 
 /**
  * A camera move in two shots, done without video.
@@ -18,12 +17,12 @@ import dollyPlate from '../assets/images/mossDolly.webp';
  * is 6–10 MB against a 2.2 MB bundle. This is two stills totalling 470 kB and
  * animates one transform, so the work stays on the compositor.
  *
- * mossDolly.webp is a wide re-cut of the same frame the old hero used, which
- * had been cropped so tight it threw away the blurred background above the
- * moss. The droplet sits at 62% across and 45% down it; anchoring the transform
- * there is what makes the push read as a camera travelling towards the droplet
- * rather than the frame simply inflating. 62% also clears the text column — at
- * 49% the camera arrived at a subject half-hidden behind its own scrim.
+ * mossDolly.webp is a wide re-cut of mossCloseup, which had been cropped so
+ * tight it threw away the blurred background above the moss. The droplet sits
+ * at 62% across and 45% down it; anchoring the transform there is what makes
+ * the push read as a camera travelling towards the droplet rather than the
+ * frame simply inflating. 62% also clears the text column — at 49% the camera
+ * arrived at a subject half-hidden behind its own scrim.
  */
 const DROPLET = '62% 45%';
 const CUT_AT = 0.45;
@@ -49,13 +48,26 @@ const HERO_SCRIM = `linear-gradient(100deg,
 // the <img> to begin with and the cut never ran: Motion wrote the opening
 // opacity once and never touched it again, while driving `scale` on that same
 // element correctly throughout. Splitting them across two elements fixes it.
-const Plate = ({ src, origin, scale, opacity }) => (
+//
+// A plate is full-bleed and then scaled past the viewport, so `sizes` cannot
+// simply be 100vw. It is set to the midpoint of each move rather than its end:
+// asking for the full 1.75x at 3x device pixels means a phone downloading the
+// entire 2160px plate, which is the thing responsive images exist to stop. The
+// cost is some softness at the very end of the push, on a photograph that is
+// already behind a scrim and a colour filter and is moving while it is seen.
+const Plate = ({ photo, sizes, origin, scale, opacity, priority = false }) => (
     <motion.div style={{ opacity }} className="absolute inset-0">
         <motion.img
-            src={src}
+            src={photo.src}
+            srcSet={photo.srcset}
+            sizes={sizes}
+            width={photo.w}
+            height={photo.h}
             alt=""
             aria-hidden="true"
-            fetchPriority="high"
+            // Only the opening shot is the LCP candidate. Marking both high
+            // makes them race, and the one that wins is the one nobody sees yet.
+            fetchPriority={priority ? 'high' : undefined}
             style={{ transformOrigin: origin, scale }}
             className="absolute inset-0 size-full object-cover photo-filter"
         />
@@ -90,13 +102,16 @@ const Hero = () => {
                         image did not start downloading until the cut landed, so
                         on a cold cache the edit flashed empty. */}
                     <Plate
-                        src={creekPlate}
+                        photo={creekPlate}
+                        sizes="115vw"
+                        priority
                         origin="50% 60%"
                         scale={reduced ? 1 : wideScale}
                         opacity={onSecondShot ? 0 : 1}
                     />
                     <Plate
-                        src={dollyPlate}
+                        photo={dollyPlate}
+                        sizes="150vw"
                         origin={DROPLET}
                         scale={reduced ? 1 : closeScale}
                         opacity={onSecondShot ? 1 : 0}

@@ -1,33 +1,19 @@
-// Image optimiser. Run with: npm run images
+// Asset generator. Run with: npm run images
 //
-// Source photography is kept as-is — those files are the client's masters and
-// several are 6000px+ straight off a camera. This writes web-sized .webp
-// siblings next to them, and the asset barrel imports only those. Re-running
-// is safe: every output is overwritten from its source.
+// This used to convert every camera master into a single 1400px .webp sibling,
+// which the asset barrel then imported. vite-imagetools took that job over on
+// 2026-08-16: photographs are now imported straight from their .jpg masters
+// with a `?w=` list, and each width is resized and encoded at build time. One
+// pipeline, several sizes, nothing to keep in sync by hand.
+//
+// What is left is the one asset a build step cannot produce: a raster icon that
+// no component imports, so nothing pulls it into the bundle graph.
 import sharp from 'sharp';
-import { mkdir, readdir, stat } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 
-const IMAGES_DIR = 'src/assets/images';
-const BRAND_DIR = 'src/assets/brand';
-
-// Nothing renders wider than roughly 700 CSS px (the product-detail gallery on
-// a 1440px layout), so 1400 covers a 2x display with room to spare.
-const MAX_WIDTH = 1400;
-const QUALITY = 78;
-
-await mkdir(BRAND_DIR, { recursive: true });
-// public/ is not in the repo yet — the touch icon below is its first occupant.
+// public/ is copied verbatim into dist/, which is what an <link rel> in
+// index.html needs and what an import would not give.
 await mkdir('public', { recursive: true });
-
-const kb = (bytes) => `${(bytes / 1024).toFixed(0)} KB`;
-
-// Hero: 2000px wide is ample for a 15% Ken Burns zoom on a 4K display.
-const hero = await sharp(`${BRAND_DIR}/Design-10.png`)
-    .resize(2000, null, { withoutEnlargement: true })
-    .webp({ quality: QUALITY })
-    .toFile(`${BRAND_DIR}/hero.webp`);
-
-console.log(`hero.webp  ${kb(hero.size)}  ${hero.width}x${hero.height}`);
 
 // iOS home-screen icon. Safari still ignores SVG favicons, so the logo is
 // rasterised once at 180px on the dark background colour.
@@ -43,34 +29,3 @@ const LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 
 await sharp(Buffer.from(LOGO)).resize(180, 180).png().toFile('public/apple-touch-icon.png');
 console.log('apple-touch-icon.png  180x180');
-
-// Product and moss photography.
-const sources = (await readdir(IMAGES_DIR)).filter((file) => /\.(jpe?g|png)$/i.test(file));
-
-let before = 0;
-let after = 0;
-
-for (const file of sources) {
-    const source = `${IMAGES_DIR}/${file}`;
-    const target = `${IMAGES_DIR}/${file.replace(/\.(jpe?g|png)$/i, '.webp')}`;
-
-    const { size } = await stat(source);
-    const result = await sharp(source)
-        .resize(MAX_WIDTH, null, { withoutEnlargement: true })
-        .webp({ quality: QUALITY })
-        .toFile(target);
-
-    before += size;
-    after += result.size;
-
-    console.log(
-        `${file.padEnd(20)} ${kb(size).padStart(8)} -> ${kb(result.size).padStart(7)}` +
-        `  ${result.width}x${result.height}`
-    );
-}
-
-const saved = ((1 - after / before) * 100).toFixed(1);
-console.log(
-    `\n${sources.length} photos: ${(before / 1024 / 1024).toFixed(1)} MB -> ` +
-    `${(after / 1024 / 1024).toFixed(1)} MB (${saved}% smaller)`
-);

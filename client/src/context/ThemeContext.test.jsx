@@ -45,9 +45,10 @@ describe('ThemeContext', () => {
         expect(document.documentElement.getAttribute('data-theme')).toBe('light');
     });
 
-    // The /lab theme sweep pins each iframe to a theme through the URL. Without
-    // this the frames would all read the same localStorage key and render the
-    // same theme, which is the one thing the panel exists to avoid.
+    // Pins a route to a theme through the URL without writing to localStorage,
+    // so checking both themes never changes the one the browser reopens on.
+    // The must-not-work half matters as much as the must-work half: this is a
+    // development affordance, and a production build has to ignore it.
     describe('the development ?theme= override', () => {
         const withSearch = (search) => window.history.replaceState({}, '', search);
 

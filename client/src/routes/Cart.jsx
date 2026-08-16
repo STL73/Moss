@@ -5,6 +5,7 @@ import { formatPrice } from '../utils/formatPrice';
 import QuantityStepper from '../components/QuantityStepper';
 import Button from '../components/Button';
 import PageHeader from '../components/PageHeader';
+import Photo from '../components/Photo';
 
 // Delivery is free above this threshold, charged flat below it.
 const FREE_DELIVERY_FROM = 5000;
@@ -37,8 +38,10 @@ const Cart = () => {
                 <ul className="flex flex-col gap-5">
                     {items.map((item) => (
                         <li key={item.id} className="card-surface p-4 flex gap-5 items-center max-sm:flex-col max-sm:items-start">
-                            <img
-                                src={item.images[0]}
+                            <Photo
+                                photo={item.images[0]}
+                                // Fixed 96px box at every breakpoint.
+                                sizes="96px"
                                 alt={item.name}
                                 className="size-24 rounded-xl object-cover shrink-0"
                             />

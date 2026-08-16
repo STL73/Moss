@@ -1,6 +1,18 @@
 import { Link, useLocation } from 'react-router';
 import { motion } from 'motion/react';
+import Photo from './Photo';
 import { formatPrice } from '../utils/formatPrice';
+
+// What the photograph is actually drawn at, not what the card is. The card
+// carries 12px of padding on each side, and leaving that out was enough to push
+// a 390px phone from 954 device pixels to 1026 — over the 960 rung and onto the
+// 1400 file, which is an 83 kB miss per card for the sake of 24px of arithmetic.
+//
+// The widest case is the Products grid: three columns of a 1312px content width,
+// less two 20px gaps, less the card padding, is 400px. FeaturedProducts runs
+// four columns and so is narrower — one `sizes` covers both, and erring wide
+// only ever costs a rung, never correctness.
+const CARD_SIZES = '(min-width: 1440px) 400px, (min-width: 1024px) 28vw, (min-width: 640px) 44vw, calc(100vw - 72px)';
 
 // The title link is stretched over the whole card with an ::after overlay, so
 // the card is clickable without nesting the Add button inside an anchor —
@@ -20,8 +32,9 @@ const ProductCard = ({ product, onAdd }) => {
         className="card-surface relative p-3 h-full group
                    hover:border-stone transition-colors duration-300"
     >
-        <img
-            src={product.images[0]}
+        <Photo
+            photo={product.images[0]}
+            sizes={CARD_SIZES}
             alt={product.name}
             loading="lazy"
             className="w-full aspect-square object-cover rounded-xl"
@@ -43,14 +56,27 @@ const ProductCard = ({ product, onAdd }) => {
                 <span className="text-accent font-medium">{formatPrice(product.price)}</span>
             </div>
             <p className="text-xs text-text-muted mt-1.5 italic">{product.species}</p>
+            {/* Sized at 152px rather than fitting its label. At 65px it read as
+                an afterthought in a card this large; full width made it heavier
+                than the photograph and, on a phone where cards already span the
+                screen, a very wide bar for a two-letter word. This balances the
+                price on the opposite side and closes the gap under it.
+
+                Resting state is --control, a mix of the card's own colour with
+                18% accent, ringed in --accent. It used to be transparent with a
+                quiet grey border, and the hover only moved the background by
+                1.13:1 in dark and 1.04:1 in light — no visible change at all,
+                which is exactly how it was reported. Rest to hover is now
+                5.87:1 and 4.98:1. */}
             <button
                 type="button"
                 onClick={() => onAdd(product)}
                 aria-label={`Add ${product.name} to basket`}
-                className="relative z-10 mt-4 ml-auto flex w-fit items-center min-h-11 px-5
-                           rounded-full text-xs font-medium
-                           border border-border-interactive text-text cursor-pointer
-                           hover:border-accent hover:bg-raised transition-colors duration-200"
+                className="relative z-10 mt-4 ml-auto flex w-fit min-w-38 items-center justify-center
+                           min-h-11 px-5 rounded-full text-xs font-medium cursor-pointer
+                           border border-accent bg-control text-text
+                           hover:bg-accent hover:text-on-accent
+                           transition-colors duration-200"
             >
                 Add
             </button>

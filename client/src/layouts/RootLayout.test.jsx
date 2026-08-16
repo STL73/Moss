@@ -19,6 +19,9 @@ vi.mock('../components/CartDrawer', () => ({ default: () => null }));
 vi.mock('../components/Toast', () => ({ default: () => null }));
 vi.mock('../components/ScrollToHash', () => ({ default: () => null }));
 vi.mock('../components/BackToTop', () => ({ default: () => null }));
+// Reads useNavigation, which only exists inside a data router. Covered by its
+// own test; here it is one more child the layout assertion has no interest in.
+vi.mock('../components/NavigationProgress', () => ({ default: () => null }));
 
 const RootLayout = (await import('./RootLayout')).default;
 
@@ -36,5 +39,31 @@ describe('RootLayout', () => {
         render(<MemoryRouter><RootLayout /></MemoryRouter>);
 
         expect(screen.getByTestId('motion-config')).toContainElement(screen.getByRole('main'));
+    });
+
+    // A skip link that points at nothing is worse than none at all: it looks
+    // like the page is accessible and silently does not move focus. The href
+    // and the landmark's id have to be checked against each other, in the one
+    // place that owns both of them.
+    it('gives the skip link a target it can actually focus', () => {
+        render(<MemoryRouter><RootLayout /></MemoryRouter>);
+
+        const skip = screen.getByRole('link', { name: /skip to content/i });
+        const main = screen.getByRole('main');
+
+        expect(main.id).toBe(skip.getAttribute('href').slice(1));
+        // Focusable by script but never by tabbing — otherwise skipping the nav
+        // would land on an element that is itself a tab stop.
+        expect(main).toHaveAttribute('tabindex', '-1');
+    });
+
+    // It only skips the navigation if it comes before it.
+    it('puts the skip link ahead of the navigation', () => {
+        render(<MemoryRouter><RootLayout /></MemoryRouter>);
+
+        const skip = screen.getByRole('link', { name: /skip to content/i });
+        const nav = document.querySelector('nav');
+
+        expect(skip.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
 });

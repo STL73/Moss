@@ -6,6 +6,7 @@ import { useCart } from '../hooks/useCart';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { formatPrice } from '../utils/formatPrice';
 import Button from './Button';
+import Photo from './Photo';
 
 const CartDrawer = () => {
     const { items, total, itemCount, drawerOpen, closeDrawer, removeItem } = useCart();
@@ -74,8 +75,11 @@ const CartDrawer = () => {
                         <ul className="flex-1 overflow-y-auto p-6 flex flex-col gap-5">
                             {items.map((item) => (
                                 <li key={item.id} className="flex gap-4 items-center">
-                                    <img
-                                        src={item.images[0]}
+                                    <Photo
+                                        photo={item.images[0]}
+                                        // Fixed 64px box at every breakpoint, so
+                                        // the 240px variant covers it to 3x.
+                                        sizes="64px"
                                         alt={item.name}
                                         className="size-16 rounded-lg object-cover shrink-0"
                                     />

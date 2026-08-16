@@ -1,4 +1,11 @@
 import { useState } from 'react';
+import Photo from './Photo';
+
+// The gallery is the 55% column of a 1312px content width — 722px — and the
+// full width of the viewport below the lg breakpoint. The thumbnails are a
+// four-up grid inside that same column.
+const MAIN_SIZES = '(min-width: 1024px) 722px, calc(100vw - 48px)';
+const THUMB_SIZES = '(min-width: 1024px) 174px, 24vw';
 
 const Gallery = ({ images, alt }) => {
     const [index, setIndex] = useState(0);
@@ -29,8 +36,9 @@ const Gallery = ({ images, alt }) => {
                     className={`block w-full overflow-hidden
                                 ${zoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
                 >
-                    <img
-                        src={images[index]}
+                    <Photo
+                        photo={images[index]}
+                        sizes={MAIN_SIZES}
                         alt={alt}
                         style={{ transformOrigin: origin }}
                         className={`w-full aspect-square object-cover transition-transform duration-500
@@ -43,7 +51,7 @@ const Gallery = ({ images, alt }) => {
                 <div className="grid grid-cols-4 gap-2.5 mt-3">
                     {images.map((image, imageIndex) => (
                         <button
-                            key={image}
+                            key={image.src}
                             type="button"
                             aria-label={`View image ${imageIndex + 1}`}
                             aria-pressed={imageIndex === index}
@@ -53,7 +61,12 @@ const Gallery = ({ images, alt }) => {
                                 imageIndex === index ? 'border-accent' : 'border-transparent hover:border-border-interactive'
                             }`}
                         >
-                            <img src={image} alt="" className="w-full aspect-square object-cover" />
+                            <Photo
+                                photo={image}
+                                sizes={THUMB_SIZES}
+                                loading="lazy"
+                                className="w-full aspect-square object-cover"
+                            />
                         </button>
                     ))}
                 </div>

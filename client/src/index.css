@@ -34,6 +34,17 @@
     --accent: #a3bfa8;
     --accent-strong: #c2d6c4;
     --stone: #5c6b61;
+    /* The resting fill of a control that sits on a card — currently the Add
+       button on a product card, whose transparent background made it invisible
+       against --surface in both themes (1.13:1 dark, 1.04:1 light on hover).
+       Derived rather than hand-picked, and declared once rather than per theme:
+       both --surface and --accent are redefined on the same element that
+       carries data-theme, so this mix resolves to a lift in dark and a deepening
+       in light on its own. 18% was chosen by eye against the real cards.
+       It is NOT required to clear 3:1 against the card — the --accent border
+       identifies the control at 8.19:1, which is what WCAG 1.4.11 asks for. Its
+       only hard limit is keeping --text legible on top of it. */
+    --control: color-mix(in oklab, var(--surface), var(--accent) 18%);
     --text: #e8ebe6;
     --text-muted: #9aa89e;
     --on-accent: #121815;
@@ -123,6 +134,7 @@
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-stone: var(--stone);
+  --color-control: var(--control);
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
   --color-on-accent: var(--on-accent);

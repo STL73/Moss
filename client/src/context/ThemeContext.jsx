@@ -11,8 +11,19 @@ const systemPreference = () =>
 const prefersReducedMotion = () =>
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Development only. The /lab theme sweep renders the same route twice in two
+// iframes, and both would otherwise read the one localStorage key and show the
+// same theme. Pinning it through the URL keeps the frames independent without
+// writing anything, so the sweep cannot change what the browser reopens on.
+const forcedTheme = () => {
+    if (!import.meta.env.DEV) return null;
+    const requested = new URLSearchParams(window.location.search).get('theme');
+    return requested === 'dark' || requested === 'light' ? requested : null;
+};
+
 export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useLocalStorage('theme', systemPreference());
+    const [stored, setTheme] = useLocalStorage('theme', systemPreference());
+    const theme = forcedTheme() ?? stored;
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);

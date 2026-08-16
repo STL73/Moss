@@ -42,7 +42,6 @@ const Products = () => {
     return (
         <>
             <PageHeader
-                eyebrow="All pieces"
                 title="The"
                 accent="collection"
                 lead="Preserved Nordic moss, brought indoors to live for years without water or light."

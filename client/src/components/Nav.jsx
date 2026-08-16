@@ -30,6 +30,7 @@ const Nav = () => {
     }, [menuOpen]);
 
     return (
+        <>
         <header className="padding-x py-6 w-full sticky top-0 z-30 bg-bg/85 backdrop-blur-md border-b border-border">
             <nav className="max-container flex justify-between items-center">
                 <Link to="/" className="flex items-center gap-2.5 text-accent">
@@ -60,31 +61,46 @@ const Nav = () => {
                         type="button"
                         onClick={openDrawer}
                         aria-label={`Open basket, ${itemCount} items`}
-                        className="p-2 rounded-full text-text-muted hover:text-text relative
+                        className="size-11 grid place-items-center rounded-full
+                                   text-text-muted hover:text-text
                                    transition-colors duration-200 cursor-pointer"
                     >
-                        <LuShoppingBasket size={19} />
-                        {itemCount > 0 && (
-                            <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full
-                                             bg-accent text-on-accent text-[10px] font-semibold
-                                             grid place-items-center">
-                                {itemCount}
-                            </span>
-                        )}
+                        {/* The count is anchored to the icon rather than to the
+                            button: the button is now a 44px tap area, and a
+                            badge pinned to its corner would float away from the
+                            basket it is counting. */}
+                        <span className="relative grid place-items-center">
+                            <LuShoppingBasket size={19} />
+                            {itemCount > 0 && (
+                                <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full
+                                                 bg-accent text-on-accent text-[10px] font-semibold
+                                                 grid place-items-center">
+                                    {itemCount}
+                                </span>
+                            )}
+                        </span>
                     </button>
                     <button
                         type="button"
                         onClick={() => setMenuOpen(true)}
                         aria-label="Open menu"
-                        className="p-2 rounded-full text-text-muted hover:text-text
+                        className="size-11 grid place-items-center rounded-full
+                                   text-text-muted hover:text-text
                                    transition-colors duration-200 cursor-pointer lg:hidden"
                     >
                         <LuMenu size={20} />
                     </button>
                 </div>
             </nav>
+        </header>
 
-            <AnimatePresence>
+        {/* Outside the header on purpose. The header carries backdrop-blur, and
+            a backdrop-filter makes an element the containing block for any
+            fixed-position descendant — so in here, "fixed top-0 bottom-0"
+            resolved against the header's own 86px box instead of the viewport.
+            The panel's background became a strip across the top of the screen
+            and the links rendered below it with nothing behind them. */}
+        <AnimatePresence>
                 {menuOpen && (
                     <>
                         <motion.div
@@ -111,7 +127,8 @@ const Nav = () => {
                                 type="button"
                                 onClick={() => setMenuOpen(false)}
                                 aria-label="Close menu"
-                                className="ml-auto block p-2 text-text-muted hover:text-text cursor-pointer"
+                                className="ml-auto size-11 grid place-items-center
+                                           text-text-muted hover:text-text cursor-pointer"
                             >
                                 <LuX size={22} />
                             </button>
@@ -131,8 +148,8 @@ const Nav = () => {
                         </motion.div>
                     </>
                 )}
-            </AnimatePresence>
-        </header>
+        </AnimatePresence>
+        </>
     );
 };
 

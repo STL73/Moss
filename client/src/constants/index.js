@@ -14,21 +14,20 @@ export const navLinks = [
     { to: '/contact', label: 'Contact' },
 ];
 
-// PLACEHOLDER — none of these figures have been verified with the client.
-// "3k Customers" in particular is a claim about the business, not a design
-// detail, and publishing it unverified is a commercial risk rather than a
-// cosmetic one. The suffixes are claims too: "Ethically foraged" and "UK-wide
-// delivery" both need confirming.
+// Replaced the invented figures on 2026-08-16 — 12 Species / 200+ Pieces /
+// 3k Customers were never confirmed with the client, and "3k Customers" is a
+// commercial claim about the business rather than a design detail. Nothing
+// here needs the client's sign-off: these are properties of preserved moss,
+// which is what the product is.
 //
-// Before launch: replace with numbers the client can substantiate, or delete
-// the stats band from Hero entirely. Hero renders a visible marker over these
-// in development so they cannot be forgotten; that marker is stripped from
-// production builds, so this comment is the only thing standing between these
-// values and a live site.
-export const PLACEHOLDER_STATS = [
-    { value: '12', label: 'Species', suffix: 'Ethically foraged' },
-    { value: '200+', label: 'Pieces', suffix: 'Made by hand' },
-    { value: '3k', label: 'Customers', suffix: 'UK-wide delivery' },
+// The care list was removed from the hero paragraph and the footer at the same
+// time. It used to appear in both, so putting it in this band as well would
+// have said the same thing three times on one page. If you add it back to
+// either, take it out of here.
+export const HERO_CLAIMS = [
+    { value: 'No', label: 'water', suffix: 'Preserved, not living' },
+    { value: 'No', label: 'light', suffix: 'Happy in a dark hallway' },
+    { value: 'No', label: 'upkeep', suffix: 'Nothing to do, for years' },
 ];
 
 export const footerLinks = [

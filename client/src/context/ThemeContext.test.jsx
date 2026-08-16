@@ -18,6 +18,7 @@ const renderWithProvider = () =>
 describe('ThemeContext', () => {
     beforeEach(() => {
         window.localStorage.clear();
+        window.history.replaceState({}, '', '/');
         document.documentElement.removeAttribute('data-theme');
         window.matchMedia = vi.fn().mockReturnValue({
             matches: false,
@@ -42,6 +43,31 @@ describe('ThemeContext', () => {
         act(() => screen.getByRole('button').click());
         expect(screen.getByRole('button')).toHaveTextContent('light');
         expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    });
+
+    // The /lab theme sweep pins each iframe to a theme through the URL. Without
+    // this the frames would all read the same localStorage key and render the
+    // same theme, which is the one thing the panel exists to avoid.
+    describe('the development ?theme= override', () => {
+        const withSearch = (search) => window.history.replaceState({}, '', search);
+
+        it('renders the theme named in the query string', () => {
+            withSearch('/?theme=light');
+            renderWithProvider();
+            expect(screen.getByRole('button')).toHaveTextContent('light');
+        });
+
+        it('leaves the stored preference alone', () => {
+            withSearch('/?theme=light');
+            renderWithProvider();
+            expect(JSON.parse(window.localStorage.getItem('theme'))).toBe('dark');
+        });
+
+        it('ignores a value that is not a theme', () => {
+            withSearch('/?theme=chartreuse');
+            renderWithProvider();
+            expect(screen.getByRole('button')).toHaveTextContent('dark');
+        });
     });
 
     // jsdom has no startViewTransition, so the tests above already prove the

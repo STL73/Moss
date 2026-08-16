@@ -47,7 +47,8 @@ const ProductCard = ({ product, onAdd }) => {
                 type="button"
                 onClick={() => onAdd(product)}
                 aria-label={`Add ${product.name} to basket`}
-                className="relative z-10 mt-4 ml-auto block px-5 py-2 rounded-full text-xs font-medium
+                className="relative z-10 mt-4 ml-auto flex w-fit items-center min-h-11 px-5
+                           rounded-full text-xs font-medium
                            border border-border-interactive text-text cursor-pointer
                            hover:border-accent hover:bg-raised transition-colors duration-200"
             >

@@ -16,7 +16,7 @@ const Cart = () => {
     if (items.length === 0) {
         return (
             <>
-                <PageHeader eyebrow="Basket" title="Nothing here" accent="yet" />
+                <PageHeader title="Nothing here" accent="yet" />
                 <div className="max-container padding-x pb-24">
                     <p className="text-text-muted">Your basket is empty.</p>
                     <div className="mt-6">
@@ -31,7 +31,7 @@ const Cart = () => {
 
     return (
         <>
-            <PageHeader eyebrow="Basket" title="Your" accent="basket" />
+            <PageHeader title="Your" accent="basket" />
 
             <div className="max-container padding-x pb-24 grid lg:grid-cols-[1fr_320px] gap-12">
                 <ul className="flex flex-col gap-5">

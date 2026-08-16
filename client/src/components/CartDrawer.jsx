@@ -59,7 +59,8 @@ const CartDrawer = () => {
                                 type="button"
                                 onClick={closeDrawer}
                                 aria-label="Close basket"
-                                className="p-2 rounded-full text-text-muted hover:text-text cursor-pointer
+                                className="size-11 grid place-items-center rounded-full
+                                           text-text-muted hover:text-text cursor-pointer
                                            transition-colors duration-200"
                             >
                                 <LuX size={20} />
@@ -84,11 +85,17 @@ const CartDrawer = () => {
                                             {item.quantity} × {formatPrice(item.price)}
                                         </p>
                                     </div>
+                                    {/* 16px tall as a bare text button — the smallest
+                                        target on the site, and the one where a
+                                        mis-tap costs the most. The negative margin
+                                        absorbs the new padding so the row does not
+                                        shift. */}
                                     <button
                                         type="button"
                                         onClick={() => removeItem(item.id)}
                                         aria-label={`Remove ${item.name}`}
-                                        className="text-xs text-text-muted hover:text-text cursor-pointer
+                                        className="inline-flex items-center min-h-11 px-2 -mx-2
+                                                   text-xs text-text-muted hover:text-text cursor-pointer
                                                    transition-colors duration-200"
                                     >
                                         Remove

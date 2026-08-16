@@ -11,7 +11,8 @@ const FilterBar = ({ active, onCategoryChange, sort, onSortChange, count }) => (
                         type="button"
                         aria-pressed={isActive}
                         onClick={() => onCategoryChange(category.slug)}
-                        className={`px-4 py-2 rounded-full text-sm cursor-pointer border
+                        className={`inline-flex items-center min-h-11 px-4 rounded-full
+                                    text-sm cursor-pointer border
                                     transition-colors duration-200 ${
                             isActive
                                 ? 'bg-accent text-on-accent border-accent font-medium'
@@ -27,12 +28,18 @@ const FilterBar = ({ active, onCategoryChange, sort, onSortChange, count }) => (
         <div className="flex items-center gap-5">
             <span className="text-sm text-text-muted">{count} pieces</span>
             <label htmlFor="sort" className="sr-only">Sort by</label>
+            {/* The popup list is painted by the browser, not by this element, and
+                it takes its colours from the <option>s. With the control set to
+                bg-transparent the options had no background of their own, so
+                Chrome drew a default light list and put the near-white --text on
+                top of it — unreadable except for the highlighted row. The control
+                itself keeps the page colour, so it still looks unfilled. */}
             <select
                 id="sort"
                 value={sort}
                 onChange={(event) => onSortChange(event.target.value)}
-                className="bg-transparent border border-border-interactive rounded-full px-4 py-2
-                           text-sm text-text cursor-pointer hover:border-accent
+                className="select-themed bg-bg border border-border-interactive rounded-full
+                           min-h-11 px-4 text-sm text-text cursor-pointer hover:border-accent
                            transition-colors duration-200"
             >
                 <option value="newest">Newest</option>

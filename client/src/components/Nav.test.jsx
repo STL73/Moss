@@ -39,6 +39,22 @@ describe('Nav', () => {
         expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
 
+    // The panel used to sit inside <header>, which carries backdrop-blur. A
+    // backdrop-filter makes an element the containing block for fixed-position
+    // descendants, so "fixed top-0 bottom-0" resolved against an 86px-tall
+    // header rather than the viewport: the panel's background was a thin strip
+    // at the top of the screen and the links rendered outside it with nothing
+    // behind them. jsdom has no layout and cannot catch that, so the invariant
+    // is enforced structurally instead.
+    it('renders the mobile menu outside the blurred header', async () => {
+        const user = userEvent.setup();
+        renderNav();
+        await user.click(screen.getByRole('button', { name: /open menu/i }));
+
+        const dialog = screen.getByRole('dialog');
+        expect(dialog.closest('header')).toBeNull();
+    });
+
     // aria-modal="true" is a claim the browser does not enforce; without a trap
     // keyboard users tab straight out into the inert page behind the overlay.
     it('keeps Tab inside the mobile menu', async () => {

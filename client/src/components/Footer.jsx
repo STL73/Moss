@@ -11,17 +11,24 @@ const Footer = () => (
                         <Logo size={30} />
                         <span className="font-display text-lg font-medium text-text">MossArt</span>
                     </Link>
+                    {/* "No watering, no light, no upkeep" was dropped on
+                        2026-08-16 — it is the hero band's line now, and the
+                        footer was the third place on the page saying it. */}
                     <p className="mt-5 text-sm leading-relaxed text-text-muted">
                         Preserved Nordic moss, arranged by hand in small batches.
-                        No watering, no light, no upkeep.
                     </p>
+                    {/* The circles stay 36px because that is the design; the
+                        ::after overlay extends each tap area to 44px without
+                        changing anything you can see. */}
                     <div className="flex items-center gap-3 mt-6">
                         {socialMedia.map(({ Icon, label, href }) => (
                             <a
                                 key={label}
                                 href={href}
                                 aria-label={label}
-                                className="size-9 rounded-full border border-border-interactive grid place-items-center
+                                className="relative size-9 rounded-full border border-border-interactive
+                                           grid place-items-center
+                                           after:absolute after:-inset-1 after:content-['']
                                            text-text-muted hover:text-accent hover:border-accent
                                            transition-colors duration-200"
                             >

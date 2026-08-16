@@ -2,7 +2,10 @@ import { motion } from 'motion/react';
 import { useTheme } from '../hooks/useTheme';
 import SunMoon from './SunMoon';
 
-const SLOT = 18;      // horizontal distance from centre to each resting place
+// 24, not 18: the two controls are 44px wide each now, so their resting places
+// have to be far enough apart that their tap areas do not overlap. Centres 48px
+// apart leaves a 4px gap between them, so a thumb can only ever hit one.
+const SLOT = 24;      // horizontal distance from centre to each resting place
 const ARC = 9;        // how far above or below the line each one travels
 const TRAVEL = 0.66;  // seconds end to end
 
@@ -44,7 +47,7 @@ const ThemeToggle = () => {
     };
 
     return (
-        <div role="group" aria-label="Theme" className="relative h-11 w-[4.5rem]">
+        <div role="group" aria-label="Theme" className="relative h-11 w-24">
             {OPTIONS.map(({ value, shape }) => {
                 const active = theme === value;
 
@@ -66,7 +69,7 @@ const ThemeToggle = () => {
                         )}
                         transition={glide}
                         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                                    size-8 grid place-items-center rounded-full
+                                    size-11 grid place-items-center rounded-full
                                     transition-colors duration-200 ${
                             active
                                 ? 'text-accent cursor-default'

@@ -175,6 +175,85 @@
   .photo-filter {
     filter: var(--photo-filter);
   }
+
+  /* A <select> whose dropdown belongs to the theme rather than to the OS.
+     Setting colours on the <option>s alone fixed the unreadable text, but the
+     highlight bar stayed the operating system's blue, because the browser
+     paints that itself.
+     `appearance: base-select` hands the popup over to CSS entirely. It is
+     Chromium 135+ only and deliberately wrapped in @supports: anywhere else
+     this block does nothing and the browser keeps drawing its own list, which
+     still works and is still readable thanks to the option colours set in
+     FilterBar. Progressive enhancement, no JavaScript, no dependency. */
+  /* The fallback, and the fix for the unreadable list: a browser that paints
+     its own popup takes the colours from the options themselves. Without this
+     the options had no background, so Chrome drew a default light list and put
+     the near-white --text on top of it.
+
+     These live here rather than as [&>option] utilities on the element. Tailwind
+     utilities sit in a later cascade layer than components, and layer order is
+     resolved before specificity — so a utility was overriding the :hover rule
+     below however specific that rule was made. One owner, no fight. */
+  .select-themed option {
+    background-color: var(--surface);
+    color: var(--text);
+  }
+
+  @supports (appearance: base-select) {
+    .select-themed,
+    .select-themed::picker(select) {
+      appearance: base-select;
+    }
+
+    /* base-select turns the control into a flex container holding a generated
+       button for the current value, and its default align-items is `normal` —
+       so the value sat against the top of the 44px pill instead of on its
+       centre line, which is where the native control had put it. */
+    .select-themed {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .select-themed::picker(select) {
+      background: var(--surface);
+      border: 1px solid var(--border-interactive);
+      border-radius: 0.9rem;
+      padding: 0.25rem;
+      margin-top: 0.35rem;
+      color: var(--text);
+    }
+
+    .select-themed option {
+      border-radius: 0.65rem;
+      padding: 0.5rem 0.75rem;
+      transition: background-color 150ms, color 150ms;
+    }
+
+    /* The highlight matches the active filter chip — bg-accent on on-accent —
+       so the two controls either side of the product grid agree with each other
+       instead of one of them borrowing the OS palette.
+
+       :focus-visible rather than :focus. Opening the list with a click puts
+       focus on the currently selected option, so with plain :focus two rows lit
+       up at once — the one you had and the one you were pointing at — and
+       neither could be told from the other. Keyboard users still get the
+       highlight, because that is what :focus-visible is for. */
+    .select-themed option:hover,
+    .select-themed option:focus-visible {
+      background: var(--accent);
+      color: var(--on-accent);
+    }
+
+    /* The selected row is named by its checkmark and a tint of the accent, not
+       by a fill, so it never competes with the row under the pointer. */
+    .select-themed option:checked {
+      color: var(--accent-strong);
+    }
+
+    .select-themed option:checked:hover {
+      color: var(--on-accent);
+    }
+  }
 }
 
 @layer utilities {
@@ -182,16 +261,8 @@
   .padding-y { @apply sm:py-24 py-14; }
   .padding   { @apply sm:px-16 px-6 sm:py-24 py-14; }
 
-  /* Applied to the hero <img> only. The scroll parallax lives on a wrapping
-     element, because a CSS animation overrides an inline transform and would
-     otherwise cancel it out. */
-  @keyframes ken-burns {
-    0%   { transform: scale(1) translate(0, 0); }
-    50%  { transform: scale(1.14) translate(-2%, -1.5%); }
-    100% { transform: scale(1) translate(0, 0); }
-  }
-
-  .animate-ken-burns {
-    animation: ken-burns 24s ease-in-out infinite;
-  }
+  /* The Ken Burns keyframes were removed on 2026-08-16 with the hero they
+     belonged to. The hero is a scroll-driven two-shot camera move now, and its
+     transforms are Motion values on the plates themselves — nothing animates
+     forever, and nothing animates off screen. See sections/Hero.jsx. */
 }

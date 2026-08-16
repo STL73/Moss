@@ -94,7 +94,6 @@ const sections = [
 const Contact = () => (
     <>
         <PageHeader
-            eyebrow="Contact"
             title="Get in"
             accent="touch"
             lead="Questions about a piece, a commission, or an order already on its way — this is the fastest way to reach the studio."

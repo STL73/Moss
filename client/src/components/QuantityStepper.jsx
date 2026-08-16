@@ -7,7 +7,7 @@ const QuantityStepper = ({ value, onChange, min = 1, max = 99 }) => (
             aria-label="Decrease quantity"
             disabled={value <= min}
             onClick={() => onChange(value - 1)}
-            className="size-9 grid place-items-center rounded-full cursor-pointer
+            className="size-11 grid place-items-center rounded-full cursor-pointer
                        text-text-muted hover:text-text hover:bg-surface
                        disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
         >
@@ -19,7 +19,7 @@ const QuantityStepper = ({ value, onChange, min = 1, max = 99 }) => (
             aria-label="Increase quantity"
             disabled={value >= max}
             onClick={() => onChange(value + 1)}
-            className="size-9 grid place-items-center rounded-full cursor-pointer
+            className="size-11 grid place-items-center rounded-full cursor-pointer
                        text-text-muted hover:text-text hover:bg-surface
                        disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
         >

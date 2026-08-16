@@ -1,12 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { PLACEHOLDER_STATS } from '../constants';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { HERO_CLAIMS } from '../constants';
 import Hero from './Hero';
 
 const renderHero = () => render(<MemoryRouter><Hero /></MemoryRouter>);
-
-const warning = () => screen.queryByTestId('placeholder-warning');
 
 describe('Hero', () => {
     beforeEach(() => {
@@ -15,29 +13,26 @@ describe('Hero', () => {
         });
     });
 
-    afterEach(() => vi.unstubAllEnvs());
-
-    it('renders the stats band', () => {
+    it('renders the claims band', () => {
         renderHero();
-        expect(screen.getByText(PLACEHOLDER_STATS[0].label)).toBeInTheDocument();
+        HERO_CLAIMS.forEach(({ label }) => {
+            expect(screen.getByText(label)).toBeInTheDocument();
+        });
     });
 
-    // These figures were never verified with the client. The marker exists so
-    // they cannot be demoed or shipped without someone noticing.
-    it('flags the stats as sample data in development', () => {
-        vi.stubEnv('DEV', true);
+    // The band, the hero paragraph and the footer all carried "no water, no
+    // light, no upkeep" at once. The band kept it; this pins the paragraph so
+    // the duplication cannot creep back in through a copy edit.
+    it('does not repeat the claims in the paragraph above them', () => {
         renderHero();
-        expect(warning()).toBeInTheDocument();
+        const paragraph = screen.getByText(/Preserved Nordic moss, arranged by hand/);
+        expect(paragraph.textContent).not.toMatch(/without water|no upkeep|any attention/i);
     });
 
-    // ...but a warning banner must never reach a customer.
-    it('strips the marker from production builds', () => {
-        vi.stubEnv('DEV', false);
+    // The figures these replaced were invented, and the dev-only marker that
+    // warned about them is gone with them. Nothing may reintroduce it silently.
+    it('carries no sample-data marker', () => {
         renderHero();
-
-        expect(warning()).not.toBeInTheDocument();
-        // The stats themselves still render - the marker is the only thing
-        // conditional on the build mode.
-        expect(screen.getByText(PLACEHOLDER_STATS[0].label)).toBeInTheDocument();
+        expect(screen.queryByTestId('placeholder-warning')).not.toBeInTheDocument();
     });
 });

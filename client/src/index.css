@@ -69,6 +69,16 @@
     --text: #e7ecee;
     --text-muted: #94a2a7;
     --on-accent: #10141a;
+
+    /* The motion vocabulary, mirroring src/lib/motion.js. These are the `quiet`
+       preset's numbers, which is what ships. The dev-only switcher overwrites
+       them at runtime as inline styles on this same element; production never
+       touches them, so the CSS is already correct before any JavaScript has
+       run. Theme-independent on purpose — how fast a page moves has nothing to
+       do with what colour it is. */
+    --motion-duration: 180ms;
+    --motion-shift: 10px;
+    --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   [data-theme="light"] {
@@ -144,21 +154,69 @@
     border-radius: 4px;
   }
 
-  /* The theme swap, crossfaded by the compositor. Finally puts --ease-out-soft
-     to work: it was defined and referenced nowhere. */
-  ::view-transition-old(root),
+  /* Two different things animate these same two pseudo-elements: a route
+     change and a theme swap. They want different motion — a page should travel,
+     a colour scheme should only crossfade — so the theme swap marks the root
+     element while it runs and takes the scoped rules further down. */
+  @keyframes vt-page-out {
+    to { opacity: 0; transform: translateY(calc(var(--motion-shift) * -1)); }
+  }
+
+  @keyframes vt-page-in {
+    from { opacity: 0; transform: translateY(var(--motion-shift)); }
+  }
+
+  ::view-transition-old(root) {
+    animation: vt-page-out var(--motion-duration) var(--motion-ease) both;
+  }
+
   ::view-transition-new(root) {
-    animation-duration: 340ms;
-    animation-timing-function: var(--ease-out-soft);
+    animation: vt-page-in var(--motion-duration) var(--motion-ease) both;
+  }
+
+  /* The photograph that travels from a product card into the detail page. The
+     browser morphs the group between its two measured boxes on its own; this
+     only matches its timing to everything else. */
+  ::view-transition-group(product-photo) {
+    animation-duration: var(--motion-duration);
+    animation-timing-function: var(--motion-ease);
+  }
+
+  /* The theme swap, crossfaded by the compositor, unchanged at 340ms. Finally
+     puts --ease-out-soft to work: it was defined and referenced nowhere.
+
+     No translation on purpose. A page that slides is a page changing; a page
+     that slides because the colours changed is the interface lying about what
+     just happened. */
+  @keyframes vt-fade-out {
+    to { opacity: 0; }
+  }
+
+  @keyframes vt-fade-in {
+    from { opacity: 0; }
+  }
+
+  :root[data-view-transition="theme"]::view-transition-old(root) {
+    animation: vt-fade-out 340ms var(--ease-out-soft) both;
+  }
+
+  :root[data-view-transition="theme"]::view-transition-new(root) {
+    animation: vt-fade-in 340ms var(--ease-out-soft) both;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    /* Belt and braces. ThemeProvider already skips startViewTransition
-       entirely under reduced motion, so this only catches a transition
-       started before the preference changed. */
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation: none;
+    /* Belt and braces, and now it has more to catch. ThemeProvider skips
+       startViewTransition entirely under reduced motion, but react-router does
+       not — it will still run one for a link with viewTransition set. Killing
+       the animation makes that transition instant, which is the same thing an
+       unsupported browser does.
+
+       The universal selector below does not reach these: the view-transition
+       tree is generated, not part of the document. */
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation: none !important;
     }
 
     *, *::before, *::after {

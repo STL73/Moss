@@ -46,11 +46,25 @@ export const ThemeProvider = ({ children }) => {
             return;
         }
 
+        // A route change animates the same ::view-transition-old(root) and
+        // ::view-transition-new(root) as this does, and wants different motion —
+        // it travels, this only crossfades. The attribute is what lets index.css
+        // tell the two apart, and it is removed again the moment the transition
+        // settles so a later route change is not mistaken for a theme swap.
+        const root = document.documentElement;
+        root.dataset.viewTransition = 'theme';
+
         // startViewTransition captures the "before" frame, then expects the
         // callback to have applied the change by the time it returns. React
         // batches by default, so without flushSync the snapshot would be taken
         // and released before the theme attribute ever changed.
-        document.startViewTransition(() => flushSync(swap));
+        const transition = document.startViewTransition(() => flushSync(swap));
+
+        // Optional chaining because a test double may return nothing at all,
+        // and a cleanup that throws would leave the attribute stuck on.
+        transition?.finished?.finally(() => {
+            delete root.dataset.viewTransition;
+        });
     }, []);
 
     const toggleTheme = useCallback(

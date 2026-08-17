@@ -3,6 +3,15 @@ import { MemoryRouter } from 'react-router';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CartProvider } from '../context/CartContext';
 
+// ProductCard calls useViewTransitionState, which asserts it is inside a data
+// router — these tests render through MemoryRouter, which is not one. Only that
+// hook is replaced; the rest of react-router stays real, so Link, useLocation
+// and the routing these tests actually exercise behave normally.
+vi.mock('react-router', async (importOriginal) => ({
+    ...(await importOriginal()),
+    useViewTransitionState: vi.fn(() => false),
+}));
+
 // Hold the pending resolver so the test can sit in the loading state for as
 // long as it needs. The real api module has zero latency under test, which
 // would otherwise make that state impossible to observe.

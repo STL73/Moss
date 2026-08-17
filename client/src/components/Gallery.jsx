@@ -7,7 +7,10 @@ import Photo from './Photo';
 const MAIN_SIZES = '(min-width: 1024px) 722px, calc(100vw - 48px)';
 const THUMB_SIZES = '(min-width: 1024px) 174px, 24vw';
 
-const Gallery = ({ images, alt }) => {
+// viewTransitionName is optional, and undefined renders no style property at
+// all — the gallery stays unnamed unless a caller asks for it. Only the product
+// detail page does, and only ever one photograph on the page may carry it.
+const Gallery = ({ images, alt, viewTransitionName }) => {
     const [index, setIndex] = useState(0);
     const [zoomed, setZoomed] = useState(false);
     const [origin, setOrigin] = useState('center');
@@ -40,7 +43,10 @@ const Gallery = ({ images, alt }) => {
                         photo={images[index]}
                         sizes={MAIN_SIZES}
                         alt={alt}
-                        style={{ transformOrigin: origin }}
+                        // transformOrigin drives the zoom; the name is what the
+                        // card's photograph morphs into. Both are inline styles
+                        // so they share one object.
+                        style={{ transformOrigin: origin, viewTransitionName }}
                         className={`w-full aspect-square object-cover transition-transform duration-500
                                     ${zoomed ? 'scale-[1.8]' : 'scale-100'}`}
                     />

@@ -9,6 +9,7 @@ import QuantityStepper from '../components/QuantityStepper';
 import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
 import NotFound from './NotFound';
+import { PRODUCT_PHOTO_VT } from '../lib/motion';
 
 const trust = [
     { Icon: LuTruck, text: 'Free UK delivery over £50' },
@@ -76,7 +77,15 @@ const ProductDetailView = ({ slug }) => {
             </nav>
 
             <div className="max-container padding-x py-12 grid lg:grid-cols-[55%_1fr] gap-14">
-                <Gallery images={product.images} alt={product.name} />
+                {/* Named unconditionally: only one product detail page exists
+                    at a time, so the gallery can never collide with itself.
+                    The related cards below decline the name for the same
+                    reason it is safe here. */}
+                <Gallery
+                    images={product.images}
+                    alt={product.name}
+                    viewTransitionName={PRODUCT_PHOTO_VT}
+                />
 
                 <div>
                     <p className="eyebrow">{product.species}</p>
@@ -115,8 +124,14 @@ const ProductDetailView = ({ slug }) => {
                     You may also <em className="text-accent italic">like</em>
                 </h2>
                 <div className="mt-8 grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5">
+                    {/* sharePhoto={false} because the gallery above already
+                        carries the shared name. useViewTransitionState is
+                        true for a target matching either the next location
+                        or the current one, so clicking a related product
+                        would otherwise name the card AND the gallery on the
+                        outgoing page, and two names abort the transition. */}
                     {related.map((item) => (
-                        <ProductCard key={item.id} product={item} onAdd={addItem} />
+                        <ProductCard key={item.id} product={item} onAdd={addItem} sharePhoto={false} />
                     ))}
                 </div>
             </section>

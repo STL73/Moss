@@ -14,7 +14,7 @@ it carries the reasoning, not just the outcome.
 
 ## Where things stand
 
-**223 tests**, lint clean, production build green at 115.30 kB gzipped. Committed but **not yet
+**174 tests**, lint clean, production build green at 115.30 kB gzipped. Committed but **not yet
 pushed** as of 2026-08-17.
 
 `feat/frontend-redesign-foundations` is ahead of `main`, and
@@ -31,9 +31,10 @@ Done 2026-08-17:
   a shopper. Names now describe what is in the frame and match the filename. Four files were
   renamed with them — `paleBowl`→`ceramicBowl`, `fernFrame`→`oakFrame` (no fern, ever),
   `mossLetter`→`mossLetterM`, `mossWord`→`mossSign`. The sign spelled KOTI and now spells HOME.
-- **The Nordic palette**, measured out of `ceramicBowl.jpg` rather than designed, behind a dev-only
-  switcher alongside the shipping Sage. Both light variants sit near 89% luminance instead of
-  near-white.
+- **The Nordic palette ships**, measured out of `ceramicBowl.jpg` rather than designed, replacing
+  the sage-green scheme. Dark accent is the ice-blue moss from that photograph; the light ground is
+  the same blue at 16% saturation, well below the near-white the web defaults to. Chosen against
+  four other candidates behind a temporary switcher, now deleted.
 - **`--accent` and `--accent-strong` are split.** `--accent` is rendered as text, which caps how
   light it can be; a hover border wants the opposite. Trying to satisfy both had collapsed the chip
   hover to 1.01:1. Now 2.16× in light, 2.35× in dark.
@@ -68,16 +69,13 @@ Done 2026-08-16:
 Slav chose **build first, deploy after** on 2026-08-17, so the deploy now sits behind the visual
 work rather than in front of it.
 
-1. **Promote Nordic Blue to the shipping palette.** Move its values into `index.css`, then delete
-   `palettes.css`, `PaletteSwitcher.jsx`, the line in `RootLayout.jsx` and the candidate block in
-   `tokens.test.js`. Chosen 2026-08-17: blue page, neutral grey cards.
-2. **CTAs and components** — buttons, cards, chips and the cart drawer, against the chosen palette.
-3. **Section and page transitions** — `motion` is already installed and already paid for.
-4. **The cinematic hero.** Four beats — aerial over moss, dive, through water, the droplet — with a
+1. **CTAs and components** — buttons, cards, chips and the cart drawer, against the new palette.
+2. **Section and page transitions** — `motion` is already installed and already paid for.
+3. **The cinematic hero.** Four beats — aerial over moss, dive, through water, the droplet — with a
    WebGL displacement warp on the dive. Needs two new photographs. **A literal flythrough is a
    video shot**: three.js is ~150 kB gzipped against a 115 kB budget, and no video-generation MCP is
    installed.
-5. **Merge PR #1 into `main`**, then **deploy to Cloudflare Pages** — root directory `client`, build
+4. **Merge PR #1 into `main`**, then **deploy to Cloudflare Pages** — root directory `client`, build
    `npm run build`, output `dist`. No `_redirects` needed: Pages auto-detects an SPA when there is
    no top-level `404.html`. Verify a deep link on the live URL. Use `moss.spireforge.co.uk` or the
    free `*.pages.dev`.

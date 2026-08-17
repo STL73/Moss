@@ -64,11 +64,12 @@ degrades; the transition is simply absent.
 
 ## Intensity as data
 
-`src/lib/motion.js` holds three presets. Each is a duration, a travel distance, an easing curve and
-a stagger:
+`src/lib/motion.js` holds three presets. Each is a duration, a travel distance and an easing curve.
+No stagger: a product grid that deals itself out card by card makes a page feel slower than it is,
+and the grid is the only place a stagger would have applied.
 
 | Preset | Duration | Shift | Character |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `quiet` | 180ms | 10px | Noticeable as smoothness, not as an effect. **Ships as the default.** |
 | `deliberate` | 320ms | 24px | Visible direction; a reader registers a designed transition. |
 | `cinematic` | 520ms | 40px | The hero's camera language applied to the page. |
@@ -83,7 +84,7 @@ document element and inherits from it.
 
 ## Files
 
-**New**
+### New
 
 - `src/lib/motion.js` — the three presets, and `applyMotionPreset(name)` which writes the custom
   properties. Pure data plus one DOM write.
@@ -93,7 +94,7 @@ document element and inherits from it.
 - `src/components/MotionPresetSwitcher.jsx` — the switcher. `import.meta.env.DEV`-guarded so it
   tree-shakes out of the production build, exactly as `PaletteSwitcher` and `VariantSwitcher` did.
 
-**Changed**
+### Changed
 
 - `src/index.css` — `::view-transition-old(root)` / `::view-transition-new(root)` rules, the
   `product-photo` group rule, and both inside the existing `prefers-reduced-motion` guard.
@@ -104,25 +105,46 @@ document element and inherits from it.
   rest of its props onto the component it renders, so the flag passes straight through.
   `SkipLink.jsx` is a plain same-page anchor and is deliberately left alone.
 - `src/components/ProductCard.jsx` — `useViewTransitionState` decides whether this card's photograph
-  carries the shared name.
-- `src/routes/ProductDetail.jsx` — the matching name on the page's main photograph.
+  carries the shared name, and a `sharePhoto` prop lets a caller refuse it.
+- `src/components/Gallery.jsx` — an optional `viewTransitionName`, merged into the inline style the
+  main photograph already carries for its zoom origin.
+- `src/routes/ProductDetail.jsx` — the matching name on the gallery, and `sharePhoto={false}` on the
+  related products.
+- `src/context/ThemeContext.jsx` — marks the root element during a theme swap. Route changes animate
+  the same two pseudo-elements the theme swap does, and the two want different motion, so the CSS
+  needs to tell them apart. Without this, tuning the page transition would silently retune the
+  approved 340ms theme crossfade.
 - `src/sections/FeaturedProducts.jsx`, `src/sections/Story.jsx` — wrapped in `Reveal`.
 - `src/layouts/RootLayout.jsx` — mounts the dev-only switcher.
 - `src/test/setup.js` — an `IntersectionObserver` stub.
 
-## The one real trap: duplicate names
+## The real trap: duplicate names
 
-Two elements carrying the same `view-transition-name` at the same time abort the entire transition.
-`CartDrawer` renders a `Photo` per cart line, so adding a product to the basket and then clicking
-that same product's card puts two photographs of it in the document at once.
+Two elements carrying the same `view-transition-name` at the same time abort the entire transition,
+and they do it silently — the page simply changes with no animation and no error a user would see.
+There are two ways to hit it here, and the second was only found by reading react-router's source
+during planning.
 
-Naming every card's photograph by slug would therefore break the transition in a state a customer
-reaches in two clicks.
+**One: the cart drawer.** It renders a `Photo` per cart line. Naming every card's photograph by slug
+would break the transition for anyone who added a product to the basket and then clicked that
+product's card — a state a customer reaches in two clicks.
 
-**The fix:** only the card being navigated to is named, decided by
-`useViewTransitionState({ pathname: '/products/' + slug, search })`. Exactly one card can match, and
-cart-drawer thumbnails are never named at all. The detail page names its photograph unconditionally,
-since only one product detail page exists at a time.
+**Two: related products.** `ProductDetail` renders `ProductCard`s below the gallery.
+`useViewTransitionState(to)` returns true when `to` matches the next location **or the current one**
+(`lib/dom/lib.js:1261`) — the "or current" clause is what makes the morph run in reverse when going
+back to the grid. But it means that clicking a related product names the gallery, which matches the
+current location, *and* the related card, which matches the next one. Two named elements on the
+outgoing page.
+
+**The fix, in two parts:**
+
+- Only the card the transition involves is named, decided by
+  `useViewTransitionState({ pathname: '/products/' + slug, search })`. Every other card returns
+  false, and cart-drawer thumbnails are never named at all.
+- `ProductCard` takes a `sharePhoto` prop, default `true`, which `ProductDetail` sets to `false` on
+  its related products. That leaves the gallery as the only named element on that page, and the
+  result is a photograph morphing into a photograph — the hero image swapping in place, which is
+  the right transition between two products anyway.
 
 ## Reduced motion
 

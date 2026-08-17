@@ -1,5 +1,5 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { Link, NavLink, useLocation } from 'react-router';
+import { useState, useEffect } from 'react';
+import { Link, NavLink } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { LuMenu, LuX, LuShoppingBasket } from 'react-icons/lu';
 import Logo from './Logo';
@@ -7,62 +7,9 @@ import ThemeToggle from './ThemeToggle';
 import { useCart } from '../hooks/useCart';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { navLinks } from '../constants';
-import { useVariant } from '../hooks/useVariant';
 
-// TEMPORARY, dev-only. A droplet marking the current page, lifted from the
-// logo's own droplet rather than being the whole mark.
-//
-// Slav asked whether the logo itself could sit on the active link. It should
-// not: the mark is already in this same bar, 200px to the left beside the
-// wordmark, so a second copy makes the same symbol appear twice in one
-// component — and a logo says "this is us", not "you are here". One element of
-// it, at 6px, is brand-derived without competing with the brand.
 const Nav = () => {
-    const variant = useVariant();
-    const withDroplet = import.meta.env.DEV && variant === 'b';
     const [menuOpen, setMenuOpen] = useState(false);
-    const linksRef = useRef(null);
-    const [droplet, setDroplet] = useState(null);
-    const { pathname, hash } = useLocation();
-
-    // Measured and moved, rather than handed to Motion's layoutId.
-    //
-    // layoutId was the first attempt and it jumped: sometimes travelling
-    // cleanly, sometimes appearing to come from a third place entirely. The
-    // header carries backdrop-blur-md, and a filter creates a containing block
-    // for absolutely positioned descendants — so Motion's layout projection,
-    // which measures against the viewport, computed a delta against the wrong
-    // origin. Measuring the offsets directly sidesteps the projection entirely,
-    // and is what the filter tabs already do for the same reason.
-    useLayoutEffect(() => {
-        const list = linksRef.current;
-        // Nothing to measure when the droplet is off, which is every production
-        // build and every test run.
-        if (!list || !withDroplet) return undefined;
-
-        const measure = () => {
-            const label = list.querySelector('[data-active="true"]');
-            // No droplet on routes that are not in the nav — /cart and a product
-            // page are reachable without any of these three being current, and a
-            // dot parked under the last one visited would be a lie.
-            if (!label) {
-                setDroplet(null);
-                return;
-            }
-            setDroplet({ left: label.offsetLeft + label.offsetWidth / 2 - 3 });
-        };
-
-        measure();
-        // Not in jsdom, and only a refinement in any case — the measurement
-        // above has already run, and this exists to catch the row rewrapping
-        // without the window resizing.
-        if (typeof ResizeObserver === 'undefined') return undefined;
-        const observer = new ResizeObserver(measure);
-        observer.observe(list);
-        return () => observer.disconnect();
-        // hash as well as pathname: About is /#about, so moving to it from the
-        // home page changes nothing else the effect would notice.
-    }, [pathname, hash, withDroplet]);
     const { itemCount, openDrawer } = useCart();
 
     // The panel claims aria-modal, so focus has to actually behave modally.
@@ -91,16 +38,7 @@ const Nav = () => {
                     <span className="font-display text-xl font-medium text-text">MossArt</span>
                 </Link>
 
-                <ul ref={linksRef} className="relative flex-1 flex justify-center items-center gap-12 max-lg:hidden">
-                    {withDroplet && droplet && (
-                        <motion.span
-                            aria-hidden="true"
-                            className="absolute -bottom-2 size-1.5 rounded-full bg-accent"
-                            initial={false}
-                            animate={{ left: droplet.left, opacity: 1 }}
-                            transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                        />
-                    )}
+                <ul className="flex-1 flex justify-center items-center gap-12 max-lg:hidden">
                     {navLinks.map((item) => (
                         <li key={item.label}>
                             <NavLink
@@ -111,13 +49,7 @@ const Nav = () => {
                                     }`
                                 }
                             >
-                                {({ isActive }) => (
-                                    // The measured element. NavLink only hands
-                                    // isActive to its className and children, so
-                                    // the flag has to be written onto something
-                                    // the effect below can find.
-                                    <span data-active={isActive}>{item.label}</span>
-                                )}
+                                {item.label}
                             </NavLink>
                         </li>
                     ))}

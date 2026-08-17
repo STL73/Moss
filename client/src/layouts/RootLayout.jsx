@@ -8,7 +8,6 @@ import ScrollToHash from '../components/ScrollToHash';
 import BackToTop from '../components/BackToTop';
 import NavigationProgress from '../components/NavigationProgress';
 import SkipLink from '../components/SkipLink';
-import VariantSwitcher from '../components/VariantSwitcher';
 
 // Motion drives its animations through the Web Animations API, which the
 // prefers-reduced-motion block in index.css cannot reach — that block only
@@ -37,11 +36,6 @@ const RootLayout = () => (
             {/* Renders nothing until the page is scrolled, so short routes
                 never show it. */}
             <BackToTop />
-            {/* Temporary, and dev-only: Vite replaces import.meta.env.DEV with
-                a literal false in a production build, so this whole subtree is
-                dead code the minifier drops. Goes when the component designs
-                are chosen. */}
-            {import.meta.env.DEV && <VariantSwitcher />}
         </div>
     </MotionConfig>
 );

@@ -30,7 +30,7 @@ const Footer = () => (
                                 className="relative size-9 rounded-full border border-border-interactive
                                            grid place-items-center
                                            after:absolute after:-inset-1 after:content-['']
-                                           text-text-muted hover:text-accent hover:border-accent
+                                           text-text-muted hover:text-accent hover:border-accent-strong
                                            transition-colors duration-200"
                             >
                                 <Icon size={15} />

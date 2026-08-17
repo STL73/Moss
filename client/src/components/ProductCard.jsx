@@ -47,8 +47,19 @@ const ProductCard = ({ product, onAdd }) => {
                         // page send the customer back to the list they were
                         // actually browsing, filters and sort intact.
                         to={{ pathname: `/products/${product.slug}`, search }}
-                        className="after:absolute after:inset-0 after:rounded-2xl
-                                   group-hover:text-accent transition-colors duration-200"
+                        // No colour change on hover. The card already answers
+                        // the pointer twice — it lifts 6px and its border moves
+                        // to --stone — and those describe the whole card, which
+                        // is what the ::after overlay actually makes clickable.
+                        // Tinting only the title implied the title was the link
+                        // and the rest of the card was not.
+                        //
+                        // The price beside it is permanently --accent, so a
+                        // title that also turned accent on hover collapsed the
+                        // one row on the card that carries a hierarchy: what
+                        // the thing is, and what it costs, became the same
+                        // colour at the moment of interest.
+                        className="after:absolute after:inset-0 after:rounded-2xl"
                     >
                         {product.name}
                     </Link>

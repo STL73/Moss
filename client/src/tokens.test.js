@@ -109,8 +109,11 @@ describe('palette contrast', () => {
             }
         );
 
+        // --accent-strong, because that is what the outline Button, filter
+        // chips, sort select, back-to-top and footer socials hover their border
+        // to since the accent tokens were split on 2026-08-17.
         it('hover borders are at least as strong as the resting state', () => {
-            expect(contrast(t().accent, t().surface))
+            expect(contrast(t()['accent-strong'], t().surface))
                 .toBeGreaterThanOrEqual(contrast(t()['border-interactive'], t().surface));
         });
 
@@ -145,6 +148,133 @@ describe('palette contrast', () => {
             // visible change. Anything under 3:1 here is that bug returning.
             it('is visibly different from the state it hovers into', () => {
                 expect(contrast(controlFill(name), t().accent)).toBeGreaterThanOrEqual(3);
+            });
+        });
+    });
+});
+
+// TEMPORARY, and deliberately self-contained so it can be deleted in one piece
+// alongside palettes.css and PaletteSwitcher.jsx.
+//
+// A candidate palette is a real palette the moment somebody looks at the site
+// through it, and the whole reason for offering a choice is that one of these
+// gets promoted to the default. Letting them skip the contrast bar until then
+// means choosing between four schemes without knowing which are legal — and
+// discovering the winner fails only after it has been chosen.
+describe('candidate palettes', () => {
+    const candidates = readFileSync('src/palettes.css', 'utf-8');
+
+    // The same extractor as above, pointed at the other file. Both palette
+    // blocks are keyed by the same selector prefix, so light is found by the
+    // longer, more specific one.
+    const paletteTokens = (selector) => {
+        const at = candidates.indexOf(selector);
+        if (at === -1) return null;
+        const body = candidates.slice(candidates.indexOf('{', at) + 1, candidates.indexOf('}', at));
+        return Object.fromEntries(
+            [...body.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{6})/g)].map((m) => [m[1], m[2]])
+        );
+    };
+
+    const NAMES = ['nordic', 'nordic-blue'];
+
+    // The two candidates differ only in their light halves. If a change to one
+    // dark block is not made to the other, comparing the light variants stops
+    // being a comparison of light variants.
+    it('keeps both candidates identical in dark', () => {
+        expect(paletteTokens(':root[data-palette="nordic"] {'))
+            .toEqual(paletteTokens(':root[data-palette="nordic-blue"] {'));
+    });
+
+    // Every candidate light ground is deliberately held near 89% relative
+    // luminance rather than the near-white the web defaults to, because a
+    // full-screen light source is the most tiring thing an interface can do.
+    // Sage in index.css is exempt and stays at 95%: it is what currently ships,
+    // and it is the control this comparison is measured against.
+    it.each(NAMES)('%s keeps its light ground below near-white', (palette) => {
+        const light = paletteTokens(`:root[data-palette="${palette}"][data-theme="light"] {`);
+        expect(luminance(light.bg)).toBeLessThan(0.86);
+    });
+
+    describe.each(NAMES)('%s', (palette) => {
+        const variants = {
+            dark: paletteTokens(`:root[data-palette="${palette}"] {`),
+            light: paletteTokens(`:root[data-palette="${palette}"][data-theme="light"] {`),
+        };
+
+        describe.each(['dark', 'light'])('%s', (name) => {
+            const t = () => variants[name];
+
+            // A palette that overrides only half the tokens inherits the rest
+            // from the shipping scheme, which is how a sage accent ends up on a
+            // terracotta ground. Every colour token must be redeclared.
+            it('redeclares every colour token', () => {
+                expect(Object.keys(t() ?? {}).sort()).toEqual(Object.keys(themes[name]).sort());
+            });
+
+            it.each(['bg', 'surface', 'raised'])(
+                'interactive borders clear 3:1 against --%s',
+                (surface) => {
+                    expect(contrast(t()['border-interactive'], t()[surface])).toBeGreaterThanOrEqual(3);
+                }
+            );
+
+            it.each(['bg', 'surface'])('body text clears 4.5:1 against --%s', (surface) => {
+                expect(contrast(t().text, t()[surface])).toBeGreaterThanOrEqual(4.5);
+            });
+
+            it.each(['bg', 'surface'])('muted text clears 4.5:1 against --%s', (surface) => {
+                expect(contrast(t()['text-muted'], t()[surface])).toBeGreaterThanOrEqual(4.5);
+            });
+
+            it('button labels clear 4.5:1 against the accent fill', () => {
+                expect(contrast(t()['on-accent'], t().accent)).toBeGreaterThanOrEqual(4.5);
+            });
+
+            // Filter chips, the sort select and the outline Button are all
+            // identified by a border alone, and hovering them swaps
+            // --border-interactive for --accent. Both clearing 3:1 individually
+            // says nothing about whether the swap is visible: in the first draft
+            // of the light palettes, Clay moved by 1.16x and Bark by 1.31x,
+            // which is a hover you cannot see.
+            //
+            // 1.5x is the floor, and the fix is rarely more contrast — it is
+            // more chroma. A near-neutral resting border hovering to a
+            // saturated accent reads as a change of colour, which the eye
+            // catches far more readily than a change of brightness.
+            //
+            // Measured against --accent-strong, which is what the components
+            // actually hover to since the two accent tokens were split. --accent
+            // is capped by having to stay legible as text; --accent-strong is
+            // free to be as loud as the border needs.
+            it('hovers to a border you can actually see', () => {
+                const rest = contrast(t()['border-interactive'], t().bg);
+                const hover = contrast(t()['accent-strong'], t().bg);
+                expect(hover / rest).toBeGreaterThanOrEqual(1.5);
+            });
+
+            // --accent is rendered as text on hover in the footer, cart, contact
+            // page and product cards, so it is held to the text threshold rather
+            // than the 3:1 that would be enough for a border or an icon.
+            it('stays legible where it is used as text', () => {
+                expect(contrast(t().accent, t().bg)).toBeGreaterThanOrEqual(4.5);
+            });
+
+            // The complaint that started the split: an accent at #17505c against
+            // text at #171c1c is 1.92:1, so prices and italics read as body copy
+            // rather than as an accent. This is not a WCAG rule — it is a design
+            // one, and it is the whole point of having an accent at all.
+            it('is distinguishable from body text', () => {
+                expect(contrast(t().accent, t().text)).toBeGreaterThanOrEqual(2.1);
+            });
+
+            // --control is never redeclared per palette: it is a color-mix of
+            // that palette's own --surface and --accent, so it re-derives here
+            // exactly as the browser will resolve it.
+            it('keeps the resting control fill legible', () => {
+                const [, base, target, percent] = CONTROL;
+                const fill = mixOklab(t()[base], t()[target], Number(percent) / 100);
+                expect(contrast(t().text, fill)).toBeGreaterThanOrEqual(4.5);
             });
         });
     });

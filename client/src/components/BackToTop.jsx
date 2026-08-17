@@ -40,7 +40,7 @@ const BackToTop = () => {
                     // size-11 is 44px, the minimum comfortable touch target.
                     className="fixed bottom-6 right-6 z-20 size-11 rounded-full grid place-items-center
                                bg-surface border border-border-interactive text-text cursor-pointer
-                               hover:border-accent hover:text-accent transition-colors duration-200"
+                               hover:border-accent-strong hover:text-accent transition-colors duration-200"
                 >
                     <LuArrowUp size={18} />
                 </motion.button>

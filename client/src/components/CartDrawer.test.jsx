@@ -12,7 +12,7 @@ const sample = {
 };
 
 const Trigger = () => {
-    const { addItem, removeItem } = useCart();
+    const { addItem, removeItem, openDrawer } = useCart();
     return (
         <>
             <button onClick={() => addItem(sample)}>trigger add</button>
@@ -20,6 +20,9 @@ const Trigger = () => {
                 so focus afterwards is attributable to the drawer, not to the
                 button vanishing from under the cursor. */}
             <button onClick={() => removeItem(sample.id)}>trigger remove</button>
+            {/* What the basket icon in Nav does: opens the panel regardless of
+                whether anything is in it. */}
+            <button onClick={openDrawer}>trigger open</button>
         </>
     );
 };
@@ -42,12 +45,38 @@ describe('CartDrawer', () => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
+    // Nav opens this panel whether or not anything is in the basket. Until
+    // 2026-08-17 an empty one rendered a blank space between the header and a
+    // "Subtotal £0.00" footer, above a button leading to /cart — which is also
+    // empty. A dead end reached in one click from every page on the site.
+    describe('with an empty basket', () => {
+        it('says the basket is empty and offers a way out', async () => {
+            const user = userEvent.setup();
+            setup();
+            await user.click(screen.getByText('trigger open'));
+
+            expect(screen.getByRole('dialog', { name: /basket/i })).toBeInTheDocument();
+            expect(screen.getByText(/basket is empty/i)).toBeInTheDocument();
+            expect(screen.getByRole('link', { name: /browse the collection/i })).toBeInTheDocument();
+        });
+
+        it('hides the subtotal and the checkout path', async () => {
+            const user = userEvent.setup();
+            setup();
+            await user.click(screen.getByText('trigger open'));
+
+            expect(screen.queryByText(/subtotal/i)).not.toBeInTheDocument();
+            expect(screen.queryByRole('link', { name: /view basket/i })).not.toBeInTheDocument();
+        });
+    });
+
     it('opens when an item is added', async () => {
         const user = userEvent.setup();
         setup();
         await user.click(screen.getByText('trigger add'));
         expect(screen.getByRole('dialog', { name: /basket/i })).toBeInTheDocument();
         expect(screen.getByText('Glass Sphere')).toBeInTheDocument();
+        expect(screen.queryByText(/basket is empty/i)).not.toBeInTheDocument();
     });
 
     // AnimatePresence keeps the panel mounted until its exit animation

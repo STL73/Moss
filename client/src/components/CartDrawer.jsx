@@ -72,6 +72,20 @@ const CartDrawer = () => {
                             {itemCount} items in basket, total {formatPrice(total)}
                         </div>
 
+                        {/* The basket icon in Nav opens this unconditionally, so
+                            an empty basket has to say so. Without this branch the
+                            panel showed a blank space between the header and a
+                            "Subtotal £0.00" footer, above a button leading to
+                            /cart — which is also empty. /cart had an empty state
+                            from the start; the drawer never got one. */}
+                        {items.length === 0 ? (
+                            <div className="flex-1 flex flex-col items-center justify-center gap-5 p-6 text-center">
+                                <p className="text-text-muted">Your basket is empty.</p>
+                                <Button as={Link} to="/products" onClick={closeDrawer} variant="outline">
+                                    Browse the collection
+                                </Button>
+                            </div>
+                        ) : (
                         <ul className="flex-1 overflow-y-auto p-6 flex flex-col gap-5">
                             {items.map((item) => (
                                 <li key={item.id} className="flex gap-4 items-center">
@@ -107,16 +121,22 @@ const CartDrawer = () => {
                                 </li>
                             ))}
                         </ul>
+                        )}
 
-                        <footer className="p-6 border-t border-border">
-                            <div className="flex justify-between mb-5">
-                                <span className="text-text-muted">Subtotal</span>
-                                <span className="text-accent font-medium">{formatPrice(total)}</span>
-                            </div>
-                            <Button as={Link} to="/cart" onClick={closeDrawer} fullWidth>
-                                View basket
-                            </Button>
-                        </footer>
+                        {/* Hidden when empty, along with the subtotal. A £0.00
+                            total and a button to a second empty page is not a
+                            checkout path, it is a dead end. */}
+                        {items.length > 0 && (
+                            <footer className="p-6 border-t border-border">
+                                <div className="flex justify-between mb-5">
+                                    <span className="text-text-muted">Subtotal</span>
+                                    <span className="text-accent font-medium">{formatPrice(total)}</span>
+                                </div>
+                                <Button as={Link} to="/cart" onClick={closeDrawer} fullWidth>
+                                    View basket
+                                </Button>
+                            </footer>
+                        )}
                     </motion.aside>
                 </>
             )}

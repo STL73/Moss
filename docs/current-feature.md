@@ -14,11 +14,31 @@ it carries the reasoning, not just the outcome.
 
 ## Where things stand
 
-Everything below is **committed and pushed**. Working tree clean, **165 tests**, lint clean,
-production build green.
+**223 tests**, lint clean, production build green at 115.30 kB gzipped. Committed but **not yet
+pushed** as of 2026-08-17.
 
-`feat/frontend-redesign-foundations` is 56 commits ahead of `main`, and
+`feat/frontend-redesign-foundations` is ahead of `main`, and
 [PR #1](https://github.com/STL73/Moss/pull/1) is open with a full description.
+
+Done 2026-08-17:
+
+- **Eighteen products across six categories**, three in each. Every one has a photograph of a made
+  object. `wreaths` is back and `letters-signs` is new; the footer offers all six.
+- **The photography is generated**, from `docs/product-image-prompts.md` through Cloudflare
+  Workers AI. `npm run images:generate` renders the pack; `node scripts/contact-sheet.mjs` composes
+  all eighteen into one sheet, which is the only way the consistency problem is visible.
+- **Finnish product names are gone.** Kivi, Metsä, Rauha, Lampi, Aurora and Talvi meant nothing to
+  a shopper. Names now describe what is in the frame and match the filename. Four files were
+  renamed with them — `paleBowl`→`ceramicBowl`, `fernFrame`→`oakFrame` (no fern, ever),
+  `mossLetter`→`mossLetterM`, `mossWord`→`mossSign`. The sign spelled KOTI and now spells HOME.
+- **The Nordic palette**, measured out of `ceramicBowl.jpg` rather than designed, behind a dev-only
+  switcher alongside the shipping Sage. Both light variants sit near 89% luminance instead of
+  near-white.
+- **`--accent` and `--accent-strong` are split.** `--accent` is rendered as text, which caps how
+  light it can be; a hover border wants the opposite. Trying to satisfy both had collapsed the chip
+  hover to 1.01:1. Now 2.16× in light, 2.35× in dark.
+- **Light-theme text read pale at nearly 13:1.** Cause was `-webkit-font-smoothing: antialiased` on
+  the whole body — right for light-on-dark, wrong for dark-on-light. Now scoped to dark.
 
 Done 2026-08-16:
 
@@ -45,14 +65,27 @@ Done 2026-08-16:
 
 ## Still open
 
-1. **Merge PR #1 into `main`.** `main` is 56 commits behind the branch.
-2. **Deploy to Cloudflare Pages** — root directory `client`, build `npm run build`, output `dist`.
-   No `_redirects` needed: Pages auto-detects an SPA when there is no top-level `404.html`. Verify
-   a deep link on the live URL to confirm. Use `moss.spireforge.co.uk` or the free `*.pages.dev`.
-3. **Product photography.** Prompt pack ready at
-   `outputs/product-image-prompts_2026-08-16_v1.md` — eight prompts sharing one house-style block
-   so the grid reads as one catalogue. Generating them restores the two removed products and the
-   wreaths category.
+Slav chose **build first, deploy after** on 2026-08-17, so the deploy now sits behind the visual
+work rather than in front of it.
+
+1. **Promote Nordic Blue to the shipping palette.** Move its values into `index.css`, then delete
+   `palettes.css`, `PaletteSwitcher.jsx`, the line in `RootLayout.jsx` and the candidate block in
+   `tokens.test.js`. Chosen 2026-08-17: blue page, neutral grey cards.
+2. **CTAs and components** — buttons, cards, chips and the cart drawer, against the chosen palette.
+3. **Section and page transitions** — `motion` is already installed and already paid for.
+4. **The cinematic hero.** Four beats — aerial over moss, dive, through water, the droplet — with a
+   WebGL displacement warp on the dive. Needs two new photographs. **A literal flythrough is a
+   video shot**: three.js is ~150 kB gzipped against a 115 kB budget, and no video-generation MCP is
+   installed.
+5. **Merge PR #1 into `main`**, then **deploy to Cloudflare Pages** — root directory `client`, build
+   `npm run build`, output `dist`. No `_redirects` needed: Pages auto-detects an SPA when there is
+   no top-level `404.html`. Verify a deep link on the live URL. Use `moss.spireforge.co.uk` or the
+   free `*.pages.dev`.
+
+Two shots to redo on a fresh neuron allocation:
+
+- **`mossSign.jpg`** — letterforms are crude next to `mossLetterM.jpg`.
+- **`mossTiles.jpg`** — the cream tile is right; the three green ones read as conifer fronds.
 
 Smaller, decided but not done:
 
@@ -69,8 +102,21 @@ will come from a supplier whose process he does not know, and this repo is pract
 photography and any UI changes follow once trading begins. The contact phone and email are
 deliberate placeholders too — the phone is from the range Ofcom reserves for fiction.
 
+## What the image model taught us
+
+All of it is written up in `docs/product-image-prompts.md`, but the expensive one is worth
+repeating: **the house-style block must never outweigh the subject line.** A 350-word material
+description placed before the subject cost eleven of eighteen images their object entirely — no
+glass sphere, no frame, no letters, just a mound of moss on a table. Flat sheet moss was dropped as
+a primary material for the same class of reason: the model cannot tell "a fine even mat" from a
+lawn.
+
 ## History
 
+- 2026-08-17 — eighteen products generated and wired in, Finnish names dropped, four files renamed,
+  the Nordic palette built from a photograph, accent tokens split, and a font-smoothing bug found
+  behind a complaint that light text "looked pale". Roughly 9,800 of the day's 10,000 free neurons
+  spent across three full passes and two rounds of fixes.
 - 2026-08-16 — plan written, `/lab` built and consumed then deleted; hero, stats, eyebrow, touch
   targets, two bug fixes, responsive images, code-splitting, skip link, the Add button, the footer
   credit and the image cull all landed. The repo was deleted and recreated to purge a real phone

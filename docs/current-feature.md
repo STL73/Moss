@@ -44,6 +44,21 @@ Done 2026-08-17:
   with nothing in the basket showed a blank panel, a £0.00 subtotal and a button to `/cart`, which
   is also empty — a dead end one click from every page. Fixed in `352bc69`, with the mark drawing
   itself above the message.
+- **The light theme is swept.** Slav reviewed the cart drawer, products and product detail in light
+  and passed all three. Open since 2026-08-12 — it is the reason `/lab` was built, and it got
+  skipped on the day. Nothing left to check here.
+- **Three design questions settled, no code needed.** The **cart drawer keeps `--surface`** rather
+  than matching the page ground: the palette carries depth as a ladder (`--bg` ground, `--surface`
+  on it, `--raised` above that), and in light the ground and the panel are only 1.16:1 apart in
+  luminance, so their separation is hue — a blue panel on a blue page under a black scrim would read
+  as murky, not layered. **No tooltips**, on the photographs or anywhere else: hover-only content
+  does not exist on a phone, so either the information matters and cannot hide behind hover, or it
+  does not and should not be on the page. The card's Add button is already the correct pattern —
+  hover reveals emphasis, never content, with `[@media(hover:none)]` as the escape. **No new
+  modals**: the drawer and the mobile menu earn theirs as overlay surfaces with focus traps, and
+  nothing left is a task that must be finished or abandoned before anything else can happen. In
+  particular, no confirm-before-remove (undo beats confirm) and no quick-view modal, which would
+  duplicate the detail route and break the linkability the breadcrumb work exists to protect.
 - **The theme icons idle** when active. The sun turns once every 40s with alternate rays retracting
   to a quarter and trading; the moon's shadow crosses the disc in one direction and wraps, which is
   the full run of phases. Only the theme in use animates — the other is an offer, not a state.
@@ -113,7 +128,18 @@ Done 2026-08-16:
 Slav chose **build first, deploy after** on 2026-08-17, so the deploy now sits behind the visual
 work rather than in front of it.
 
-1. **Section and page transitions** — `motion` is already installed and already paid for.
+1. ~~**Section and page transitions**~~ — **built in full on 2026-08-17 and reverted the same day**
+   in `00bda7a`. The mechanism worked and was measured; what never arrived was a visible difference,
+   at any of the three intensities that were put behind a dev-only switcher to choose between. The
+   spec and the plan survive, so picking this up is a revert-of-the-revert rather than a rewrite —
+   but **read the revert commit message first**, it carries two defects that cost most of the
+   session: translating the root snapshot drags the header and footer with it (identical on every
+   route, so it reads as the window jumping), and excluding them with bare `header`/`footer`
+   selectors kills every transition on an inner route, because `PageHeader` renders a second
+   `<header>` and a duplicate `view-transition-name` aborts the transition silently. An aborted
+   transition is indistinguishable from a finished one in a screenshot; `document.getAnimations()`
+   during the transition returns `[]` and is the only check that tells them apart.
+   → `docs/superpowers/plans/2026-08-17-section-and-page-transitions.md`
 2. **The cinematic hero.** Four beats — aerial over moss, dive, through water, the droplet — with a
    WebGL displacement warp on the dive. Needs two new photographs. **A literal flythrough is a
    video shot**: three.js is ~150 kB gzipped against a 115 kB budget, and no video-generation MCP is
@@ -130,6 +156,15 @@ Two shots to redo on a fresh neuron allocation:
 
 Smaller, decided but not done:
 
+- **The cart toast has no undo.** Adding a product confirms, removing one says nothing. That
+  asymmetry is defensible on its own — an add changes a number in the header you cannot see, while a
+  removal happens in front of you — so what is missing is **Undo, not a message**. It has to restore
+  the item *and* its previous quantity, and the stepper stepping down to zero has to go through the
+  same path. Two things change with it: the 2.6s auto-dismiss (a button that vanishes in under three
+  seconds cannot be reached by keyboard) and `role="status"`, which announces politely and is wrong
+  for something actionable. Position moves to **bottom-centre** at the same time — `bottom-6 left-6`
+  exists only to dodge `BackToTop` at `bottom-6 right-6`, and an action belongs in the thumb zone.
+  Roughly an hour with tests. → `client/src/components/Toast.jsx`, `context/CartContext.jsx`
 - **`motion` is 43.9 kB gzipped**, 30% of the JS budget. `LazyMotion` could cut ~20 kB but needs
   every animated component touched. Undecided.
 - **Remove the `noindex`** in `client/index.html` on the day the shop is real. It is not a

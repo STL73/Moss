@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "images": "node scripts/optimise-images.mjs"
+    "images": "node scripts/optimise-images.mjs",
+    "images:generate": "node scripts/generate-product-images.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",

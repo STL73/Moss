@@ -97,11 +97,32 @@ describe('CartDrawer', () => {
         await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
     });
 
+    // £85.00 now appears twice on a single-item basket — once as that line's
+    // total and once as the subtotal — so this has to say which one it means.
     it('shows the running total', async () => {
         const user = userEvent.setup();
         setup();
         await user.click(screen.getByText('trigger add'));
-        expect(screen.getByText('£85.00')).toBeInTheDocument();
+
+        const subtotal = screen.getByText('Subtotal').parentElement;
+        expect(subtotal).toHaveTextContent('£85.00');
+    });
+
+    // The line total is the redesign's own claim: the drawer used to print
+    // "2 x £85.00" and leave the multiplication to the reader.
+    //
+    // Scoped to the row, because with one product in the basket the line total
+    // and the subtotal are necessarily the same number — matching on the text
+    // alone cannot tell which of them it found.
+    it('multiplies the line total by the quantity', async () => {
+        const user = userEvent.setup();
+        setup();
+        await user.click(screen.getByText('trigger add'));
+        await user.click(screen.getByRole('button', { name: /increase quantity/i }));
+
+        const line = screen.getByRole('listitem');
+        expect(line).toHaveTextContent('£85.00 each');
+        expect(line).toHaveTextContent('£170.00');
     });
 
     it('moves focus into the panel when it opens', async () => {

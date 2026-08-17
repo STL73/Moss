@@ -1,16 +1,40 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
-import { LuX } from 'react-icons/lu';
+import { LuX, LuTrash2 } from 'react-icons/lu';
 import { useCart } from '../hooks/useCart';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { formatPrice } from '../utils/formatPrice';
 import Button from './Button';
 import Photo from './Photo';
+import QuantityStepper from './QuantityStepper';
 import Logo from './Logo';
 
+/**
+ * Variant B — the basket you can actually use.
+ *
+ * Variant A's structure is genuinely good and is kept wholesale: the focus
+ * trap, the aria-live total, Escape to close, the scroll lock and the overlay
+ * are all correct and none of them are touched here.
+ *
+ * What changed is what the panel lets you do and what it tells you:
+ *
+ * - QUANTITY. A had Remove and nothing else, so changing "2" to "1" meant
+ *   leaving the drawer for /cart. The stepper already exists and is already
+ *   tested; it just was not here.
+ * - LINE TOTALS. A showed "2 x £85.00" and left the multiplication to the
+ *   reader. The quantity is now the control, so the line shows what that line
+ *   costs.
+ * - A SHIPPING LINE. A showed a subtotal and a button, which reads as the
+ *   final number. Saying delivery is calculated later is the difference between
+ *   a price and a surprise.
+ * - REMOVE became an icon with an accessible name rather than a text button
+ *   competing with the product name for the eye at the same size.
+ *
+ * The empty state is carried over from the fix applied to A on 2026-08-17.
+ */
 const CartDrawer = () => {
-    const { items, total, itemCount, drawerOpen, closeDrawer, removeItem } = useCart();
+    const { items, total, itemCount, drawerOpen, closeDrawer, removeItem, setQuantity } = useCart();
 
     // Focus in on open, contained while open, back to the trigger on close.
     const panelRef = useFocusTrap(drawerOpen);
@@ -53,16 +77,16 @@ const CartDrawer = () => {
                         className="fixed top-0 right-0 bottom-0 w-full max-w-md z-50
                                    bg-surface border-l border-border flex flex-col outline-none"
                     >
-                        <header className="flex justify-between items-center p-6 border-b border-border">
+                        <header className="flex items-center justify-between gap-4 border-b border-border p-6">
                             <h2 className="font-display text-xl">
-                                Basket <span className="text-text-muted text-sm">({itemCount})</span>
+                                Basket <span className="text-sm text-text-muted">({itemCount})</span>
                             </h2>
                             <button
                                 type="button"
                                 onClick={closeDrawer}
                                 aria-label="Close basket"
                                 className="size-11 grid place-items-center rounded-full
-                                           text-text-muted hover:text-text cursor-pointer
+                                           text-text-muted hover:text-text hover:bg-raised cursor-pointer
                                            transition-colors duration-200"
                             >
                                 <LuX size={20} />
@@ -73,14 +97,8 @@ const CartDrawer = () => {
                             {itemCount} items in basket, total {formatPrice(total)}
                         </div>
 
-                        {/* The basket icon in Nav opens this unconditionally, so
-                            an empty basket has to say so. Without this branch the
-                            panel showed a blank space between the header and a
-                            "Subtotal £0.00" footer, above a button leading to
-                            /cart — which is also empty. /cart had an empty state
-                            from the start; the drawer never got one. */}
                         {items.length === 0 ? (
-                            <div className="flex-1 flex flex-col items-center justify-center gap-5 p-6 text-center">
+                            <div className="flex flex-1 flex-col items-center justify-center gap-5 p-6 text-center">
                                 {/* The one place on the site the mark is allowed
                                     to perform. An empty basket is a large panel
                                     holding a single line of text, so the brand
@@ -94,52 +112,71 @@ const CartDrawer = () => {
                                 </Button>
                             </div>
                         ) : (
-                        <ul className="flex-1 overflow-y-auto p-6 flex flex-col gap-5">
-                            {items.map((item) => (
-                                <li key={item.id} className="flex gap-4 items-center">
-                                    <Photo
-                                        photo={item.images[0]}
-                                        // Fixed 64px box at every breakpoint, so
-                                        // the 240px variant covers it to 3x.
-                                        sizes="64px"
-                                        alt={item.name}
-                                        className="size-16 rounded-lg object-cover shrink-0"
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium truncate">{item.name}</p>
-                                        <p className="text-xs text-text-muted mt-0.5">
-                                            {item.quantity} × {formatPrice(item.price)}
-                                        </p>
-                                    </div>
-                                    {/* 16px tall as a bare text button — the smallest
-                                        target on the site, and the one where a
-                                        mis-tap costs the most. The negative margin
-                                        absorbs the new padding so the row does not
-                                        shift. */}
-                                    <button
-                                        type="button"
-                                        onClick={() => removeItem(item.id)}
-                                        aria-label={`Remove ${item.name}`}
-                                        className="inline-flex items-center min-h-11 px-2 -mx-2
-                                                   text-xs text-text-muted hover:text-text cursor-pointer
-                                                   transition-colors duration-200"
-                                    >
-                                        Remove
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                            <ul className="flex-1 divide-y divide-border overflow-y-auto">
+                                {items.map((item) => (
+                                    <li key={item.id} className="flex gap-4 p-6">
+                                        <Photo
+                                            photo={item.images[0]}
+                                            // Fixed 80px box at every breakpoint,
+                                            // so the 240px variant still covers it
+                                            // to 3x.
+                                            sizes="80px"
+                                            alt={item.name}
+                                            className="size-20 shrink-0 rounded-lg object-cover"
+                                        />
+
+                                        <div className="flex min-w-0 flex-1 flex-col gap-2">
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div className="min-w-0">
+                                                    <p className="truncate text-sm font-medium">{item.name}</p>
+                                                    <p className="mt-0.5 text-xs text-text-muted">
+                                                        {formatPrice(item.price)} each
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeItem(item.id)}
+                                                    aria-label={`Remove ${item.name}`}
+                                                    // A bin, not a cross. The X
+                                                    // in the header dismisses the
+                                                    // panel; the same glyph on a
+                                                    // row said "close this line",
+                                                    // which is not what it does.
+                                                    className="-mr-2 -mt-2 grid size-11 shrink-0 place-items-center
+                                                               rounded-full text-text-muted hover:bg-raised
+                                                               hover:text-text cursor-pointer
+                                                               transition-colors duration-200"
+                                                >
+                                                    <LuTrash2 size={16} />
+                                                </button>
+                                            </div>
+
+                                            <div className="flex items-center justify-between gap-3">
+                                                <QuantityStepper
+                                                    value={item.quantity}
+                                                    onChange={(next) => setQuantity(item.id, next)}
+                                                />
+                                                <span className="text-sm font-medium tabular-nums">
+                                                    {formatPrice(item.price * item.quantity)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
                         )}
 
-                        {/* Hidden when empty, along with the subtotal. A £0.00
-                            total and a button to a second empty page is not a
-                            checkout path, it is a dead end. */}
                         {items.length > 0 && (
-                            <footer className="p-6 border-t border-border">
-                                <div className="flex justify-between mb-5">
+                            <footer className="border-t border-border p-6">
+                                <div className="flex justify-between">
                                     <span className="text-text-muted">Subtotal</span>
-                                    <span className="text-accent font-medium">{formatPrice(total)}</span>
+                                    <span className="font-display text-lg text-accent tabular-nums">
+                                        {formatPrice(total)}
+                                    </span>
                                 </div>
+                                <p className="mt-1 mb-5 text-xs text-text-muted">
+                                    Delivery calculated at checkout.
+                                </p>
                                 <Button as={Link} to="/cart" onClick={closeDrawer} fullWidth>
                                     View basket
                                 </Button>

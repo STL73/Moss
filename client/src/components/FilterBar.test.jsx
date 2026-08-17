@@ -26,16 +26,27 @@ describe('FilterBar', () => {
         expect(onCategoryChange).toHaveBeenCalledWith('wall-art');
     });
 
-    it('shows the item count', () => {
+    // The count is split across two elements so the number can carry --text
+    // against the muted word beside it, which is why this cannot match on one
+    // text node. The live region is the thing worth asserting anyway: changing
+    // a filter re-renders the grid silently, and this is what announces it.
+    it('shows the item count in a live region', () => {
         render(<FilterBar {...props} />);
-        expect(screen.getByText('8 pieces')).toBeInTheDocument();
+        const status = screen.getByText(/pieces/).closest('[aria-live]');
+        expect(status).toHaveTextContent('8 pieces');
+    });
+
+    it('names the active category alongside the count when one is filtered', () => {
+        render(<FilterBar {...props} active="wall-art" count={3} />);
+        expect(screen.getByText(/pieces/).closest('[aria-live]'))
+            .toHaveTextContent('3 pieces in Wall Art');
     });
 
     it('reports a sort change', async () => {
         const onSortChange = vi.fn();
         const user = userEvent.setup();
         render(<FilterBar {...props} onSortChange={onSortChange} />);
-        await user.selectOptions(screen.getByLabelText('Sort by'), 'price-asc');
+        await user.selectOptions(screen.getByLabelText('Sort'), 'price-asc');
         expect(onSortChange).toHaveBeenCalledWith('price-asc');
     });
 });

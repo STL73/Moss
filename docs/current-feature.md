@@ -14,7 +14,7 @@ it carries the reasoning, not just the outcome.
 
 ## Where things stand
 
-**174 tests**, lint clean, production build green at 115.30 kB gzipped. Committed but **not yet
+**178 tests**, lint clean, production build green at 116.63 kB gzipped. Committed but **not yet
 pushed** as of 2026-08-17.
 
 `feat/frontend-redesign-foundations` is ahead of `main`, and
@@ -40,6 +40,50 @@ Done 2026-08-17:
   hover to 1.01:1. Now 2.16× in light, 2.35× in dark.
 - **Light-theme text read pale at nearly 13:1.** Cause was `-webkit-font-smoothing: antialiased` on
   the whole body — right for light-on-dark, wrong for dark-on-light. Now scoped to dark.
+- **The cart drawer had no empty state.** The basket icon opens it unconditionally, so clicking it
+  with nothing in the basket showed a blank panel, a £0.00 subtotal and a button to `/cart`, which
+  is also empty — a dead end one click from every page. Fixed in `352bc69`, with the mark drawing
+  itself above the message.
+- **The theme icons idle** when active. The sun turns once every 40s with alternate rays retracting
+  to a quarter and trading; the moon's shadow crosses the disc in one direction and wraps, which is
+  the full run of phases. Only the theme in use animates — the other is an offer, not a state.
+
+### The component redesigns shipped
+
+`ProductCard`, `Button`, `FilterBar` and `CartDrawer` were each redesigned on 2026-08-17 and put
+behind a dev-only A/B switch so they could be judged on the real site rather than in isolation.
+Slav approved all four; the switch, the dispatchers and `useVariant` are deleted, and the
+redesigned versions are now simply the components.
+
+What shipped:
+
+- **ProductCard** — photograph flush to the card edges, name in the display serif with the price
+  larger again in `--accent`, Add revealed on hover (and permanently visible on touch, where there
+  is no hover to wait for), and a 2px accent halo that fades in on hover. No stock messaging:
+  nothing is held in stock, so scarcity would have been a lie.
+- **Button** — a real press state. It previously declared `transition-[...transform]` and never
+  animated one, so a click produced no feedback at all.
+- **FilterBar** — browser tabs. The active tab's fill spans the whole tab with rounded top corners,
+  sitting on the rule, and travels as an inchworm: left and right edges on separate springs, so the
+  leading edge sets off first and the shape stretches in transit.
+- **CartDrawer** — quantity steppers, per-line totals instead of leaving "2 × £85.00" for the
+  reader to multiply, a delivery line so the subtotal is not mistaken for the final number, and a
+  bin icon rather than the X that already means "dismiss the panel".
+- **Nav** — a droplet under the active link. The droplet from the logo, not the logo: the mark is
+  already in that bar beside the wordmark, and a logo says "this is us", not "you are here".
+
+There was a wrong turn on the way: `5f363b0` deleted all of it after a misread, and it was restored
+from `7c08763` and `264fefa`. Those two commits are the reference if any detail needs recovering.
+
+Three findings from that round are worth keeping whatever happens to the designs:
+
+- **`layoutId` cannot deform.** It moves one rigid box between two measured positions. Anything that
+  should change shape in transit has to animate its edges independently.
+- **`backdrop-filter` breaks Motion's layout projection.** The header has `backdrop-blur-md`, which
+  creates a containing block, so `layoutId` measured its delta against the wrong origin and jumped.
+  Measuring offsets directly is what both the filter bar and the nav droplet ended up doing.
+- **`overflow-hidden` clips a glow.** A hover halo drawn outside a card's box is invisible if the
+  card clips. Put the clip on the child that needs it.
 
 Done 2026-08-16:
 
@@ -69,13 +113,12 @@ Done 2026-08-16:
 Slav chose **build first, deploy after** on 2026-08-17, so the deploy now sits behind the visual
 work rather than in front of it.
 
-1. **CTAs and components** — buttons, cards, chips and the cart drawer, against the new palette.
-2. **Section and page transitions** — `motion` is already installed and already paid for.
-3. **The cinematic hero.** Four beats — aerial over moss, dive, through water, the droplet — with a
+1. **Section and page transitions** — `motion` is already installed and already paid for.
+2. **The cinematic hero.** Four beats — aerial over moss, dive, through water, the droplet — with a
    WebGL displacement warp on the dive. Needs two new photographs. **A literal flythrough is a
    video shot**: three.js is ~150 kB gzipped against a 115 kB budget, and no video-generation MCP is
    installed.
-4. **Merge PR #1 into `main`**, then **deploy to Cloudflare Pages** — root directory `client`, build
+3. **Merge PR #1 into `main`**, then **deploy to Cloudflare Pages** — root directory `client`, build
    `npm run build`, output `dist`. No `_redirects` needed: Pages auto-detects an SPA when there is
    no top-level `404.html`. Verify a deep link on the live URL. Use `moss.spireforge.co.uk` or the
    free `*.pages.dev`.

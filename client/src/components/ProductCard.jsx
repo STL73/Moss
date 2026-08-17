@@ -1,8 +1,7 @@
-import { Link, useLocation, useViewTransitionState } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { motion } from 'motion/react';
 import Photo from './Photo';
 import { formatPrice } from '../utils/formatPrice';
-import { PRODUCT_PHOTO_VT } from '../lib/motion';
 
 // Identical to variant A's, and for the same reason: what the photograph is
 // actually drawn at, not what the card is. The photo is now flush to the card
@@ -44,19 +43,8 @@ const RING = '0 0 0 2px var(--accent), 0 0 22px -2px var(--accent)';
  * frame around a photograph on a card that is itself on a page reads as three
  * nested boxes; letting the image be the top of the card leaves one.
  */
-const ProductCard = ({ product, onAdd, sharePhoto = true }) => {
+const ProductCard = ({ product, onAdd }) => {
     const { search } = useLocation();
-    const to = { pathname: `/products/${product.slug}`, search };
-
-    // True only while a view transition is in flight that involves this card's
-    // product — as the destination going in, or as the origin coming back.
-    // Every other card returns false, which is what keeps exactly one
-    // photograph carrying the name.
-    //
-    // sharePhoto is the escape hatch for related products on the detail page:
-    // there, the gallery is already named, and a second named element would
-    // abort the transition rather than degrade it.
-    const isMorphing = useViewTransitionState(to) && sharePhoto;
 
     return (
         <motion.div
@@ -106,11 +94,6 @@ const ProductCard = ({ product, onAdd, sharePhoto = true }) => {
                     sizes={CARD_SIZES}
                     alt={product.name}
                     loading="lazy"
-                    // Applied only while morphing. A view-transition-name left
-                    // on permanently would collide with the cart drawer's
-                    // thumbnail of the same product the moment the basket has
-                    // it, and a collision aborts the transition silently.
-                    style={isMorphing ? { viewTransitionName: PRODUCT_PHOTO_VT } : undefined}
                     className="w-full aspect-square object-cover
                                transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
                                group-hover:scale-[1.04] motion-reduce:transition-none
@@ -129,8 +112,7 @@ const ProductCard = ({ product, onAdd, sharePhoto = true }) => {
                         // clickable without nesting the Add button inside an
                         // anchor — which would be invalid HTML and would break
                         // screen-reader navigation.
-                        to={to}
-                        viewTransition
+                        to={{ pathname: `/products/${product.slug}`, search }}
                         className="after:absolute after:inset-0 after:z-0"
                     >
                         {product.name}

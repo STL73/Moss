@@ -107,7 +107,7 @@ const CartDrawer = () => {
                                     button, where the glyph IS the label. */}
                                 <Logo size={64} draw className="text-accent/70" />
                                 <p className="text-text-muted">Your basket is empty.</p>
-                                <Button as={Link} to="/products" viewTransition onClick={closeDrawer} variant="outline">
+                                <Button as={Link} to="/products" onClick={closeDrawer} variant="outline">
                                     Browse the collection
                                 </Button>
                             </div>
@@ -177,7 +177,7 @@ const CartDrawer = () => {
                                 <p className="mt-1 mb-5 text-xs text-text-muted">
                                     Delivery calculated at checkout.
                                 </p>
-                                <Button as={Link} to="/cart" viewTransition onClick={closeDrawer} fullWidth>
+                                <Button as={Link} to="/cart" onClick={closeDrawer} fullWidth>
                                     View basket
                                 </Button>
                             </footer>

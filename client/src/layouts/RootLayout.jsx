@@ -8,7 +8,6 @@ import ScrollToHash from '../components/ScrollToHash';
 import BackToTop from '../components/BackToTop';
 import NavigationProgress from '../components/NavigationProgress';
 import SkipLink from '../components/SkipLink';
-import MotionPresetSwitcher from '../components/MotionPresetSwitcher';
 
 // Motion drives its animations through the Web Animations API, which the
 // prefers-reduced-motion block in index.css cannot reach — that block only
@@ -37,11 +36,6 @@ const RootLayout = () => (
             {/* Renders nothing until the page is scrolled, so short routes
                 never show it. */}
             <BackToTop />
-            {/* Dev-only, and deleted along with the store in lib/motion.js once
-                a preset has been chosen. import.meta.env.DEV is a literal at
-                build time, so this whole branch — and the import above with it —
-                is dropped from the production bundle. */}
-            {import.meta.env.DEV && <MotionPresetSwitcher />}
         </div>
     </MotionConfig>
 );

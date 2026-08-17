@@ -132,7 +132,7 @@ const Hero = () => {
                                 touch — a piece of woodland floor for a wall, a shelf, or a desk.
                             </p>
                             <div className="mt-10">
-                                <Button as={Link} to="/products" viewTransition>Shop the collection</Button>
+                                <Button as={Link} to="/products">Shop the collection</Button>
                             </div>
                         </div>
                     </div>

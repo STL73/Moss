@@ -8,7 +8,7 @@ const Footer = () => (
         <div className="max-container padding-x py-16">
             <div className="flex justify-between flex-wrap gap-12 max-lg:flex-col">
                 <div className="max-w-xs">
-                    <Link to="/" viewTransition className="flex items-center gap-2.5 text-accent">
+                    <Link to="/" className="flex items-center gap-2.5 text-accent">
                         <Logo size={30} />
                         <span className="font-display text-lg font-medium text-text">MossArt</span>
                     </Link>
@@ -48,7 +48,6 @@ const Footer = () => (
                                     <li key={link.name}>
                                         <Link
                                             to={link.to}
-                                            viewTransition
                                             className="text-sm text-text-muted hover:text-text transition-colors duration-200"
                                         >
                                             {link.name}

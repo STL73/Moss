@@ -81,7 +81,7 @@ const Nav = () => {
         <>
         <header className="padding-x py-6 w-full sticky top-0 z-30 bg-bg/85 backdrop-blur-md border-b border-border">
             <nav className="max-container flex justify-between items-center">
-                <Link to="/" viewTransition className="flex items-center gap-2.5 text-accent">
+                <Link to="/" className="flex items-center gap-2.5 text-accent">
                     <Logo size={34} />
                     <span className="font-display text-xl font-medium text-text">MossArt</span>
                 </Link>
@@ -100,7 +100,6 @@ const Nav = () => {
                         <li key={item.label}>
                             <NavLink
                                 to={item.to}
-                                viewTransition
                                 className={({ isActive }) =>
                                     `text-[0.95rem] transition-colors duration-200 ${
                                         isActive ? 'text-text' : 'text-text-muted hover:text-text'
@@ -201,7 +200,6 @@ const Nav = () => {
                                     <li key={item.label}>
                                         <Link
                                             to={item.to}
-                                            viewTransition
                                             onClick={() => setMenuOpen(false)}
                                             className="font-display text-2xl text-text"
                                         >

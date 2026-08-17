@@ -76,7 +76,10 @@ const ThemeToggle = () => {
                                 : 'text-text-muted/45 hover:text-text-muted cursor-pointer'
                         }`}
                     >
-                        <SunMoon shape={shape} />
+                        {/* Only the theme in use idles. The other icon is an
+                            offer, and an animated offer competes with the state
+                            it is offering to change. */}
+                        <SunMoon shape={shape} active={active} />
                     </motion.button>
                 );
             })}

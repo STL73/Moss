@@ -44,8 +44,8 @@ describe('api', () => {
     });
 
     it('returns one product by slug', async () => {
-        const result = await getProduct('lampi-jar');
-        expect(result.name).toBe('Lampi Jar');
+        const result = await getProduct('apothecary-jar');
+        expect(result.name).toBe('Apothecary Jar');
     });
 
     it('rejects for an unknown slug', async () => {

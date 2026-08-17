@@ -16,20 +16,20 @@ const images = [photo('one'), photo('two')];
 
 describe('Gallery', () => {
     it('shows the first image by default', () => {
-        render(<Gallery images={images} alt="Lampi Jar" />);
-        expect(screen.getByAltText('Lampi Jar')).toHaveAttribute('src', 'one-960.webp');
+        render(<Gallery images={images} alt="Apothecary Jar" />);
+        expect(screen.getByAltText('Apothecary Jar')).toHaveAttribute('src', 'one-960.webp');
     });
 
     it('switches image when a thumbnail is chosen', async () => {
         const user = userEvent.setup();
-        render(<Gallery images={images} alt="Lampi Jar" />);
+        render(<Gallery images={images} alt="Apothecary Jar" />);
         await user.click(screen.getByRole('button', { name: /view image 2/i }));
-        expect(screen.getByAltText('Lampi Jar')).toHaveAttribute('src', 'two-960.webp');
+        expect(screen.getByAltText('Apothecary Jar')).toHaveAttribute('src', 'two-960.webp');
     });
 
     it('marks the active thumbnail', async () => {
         const user = userEvent.setup();
-        render(<Gallery images={images} alt="Lampi Jar" />);
+        render(<Gallery images={images} alt="Apothecary Jar" />);
         await user.click(screen.getByRole('button', { name: /view image 2/i }));
         expect(screen.getByRole('button', { name: /view image 2/i })).toHaveAttribute('aria-pressed', 'true');
     });
@@ -39,9 +39,9 @@ describe('Gallery', () => {
     // keyboard and invisible to assistive tech.
     it('exposes the zoom as a keyboard-reachable control', async () => {
         const user = userEvent.setup();
-        render(<Gallery images={images} alt="Lampi Jar" />);
+        render(<Gallery images={images} alt="Apothecary Jar" />);
 
-        const zoom = screen.getByRole('button', { name: /zoom lampi jar/i });
+        const zoom = screen.getByRole('button', { name: /zoom apothecary jar/i });
         expect(zoom).toHaveAttribute('aria-pressed', 'false');
 
         await user.tab();
@@ -50,9 +50,9 @@ describe('Gallery', () => {
 
     it('toggles zoom from the keyboard', async () => {
         const user = userEvent.setup();
-        render(<Gallery images={images} alt="Lampi Jar" />);
+        render(<Gallery images={images} alt="Apothecary Jar" />);
 
-        const zoom = screen.getByRole('button', { name: /zoom lampi jar/i });
+        const zoom = screen.getByRole('button', { name: /zoom apothecary jar/i });
         zoom.focus();
 
         await user.keyboard('{Enter}');

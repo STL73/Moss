@@ -22,7 +22,7 @@ vi.mock('motion/react', async (importOriginal) => ({
 const Products = (await import('./Products')).default;
 
 const sample = [{
-    id: '1', slug: 'kivi-sphere', name: 'Kivi Sphere', species: 'Cladonia stellaris',
+    id: '1', slug: 'glass-sphere', name: 'Glass Sphere', species: 'Cladonia stellaris',
     price: 8500, images: ['a.jpg'], category: 'spheres',
 }];
 
@@ -54,7 +54,7 @@ describe('Products', () => {
 
         pending.resolve(sample);
 
-        await waitFor(() => expect(screen.getByText('Kivi Sphere')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('Glass Sphere')).toBeInTheDocument());
         expect(screen.getByTestId('animate-presence')).toBeInTheDocument();
     });
 });

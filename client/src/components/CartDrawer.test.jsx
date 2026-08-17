@@ -7,7 +7,7 @@ import { useCart } from '../hooks/useCart';
 import CartDrawer from './CartDrawer';
 
 const sample = {
-    id: '1', slug: 'kivi-sphere', name: 'Kivi Sphere', species: 'Cladonia stellaris',
+    id: '1', slug: 'glass-sphere', name: 'Glass Sphere', species: 'Cladonia stellaris',
     price: 8500, images: ['a.jpg'],
 };
 
@@ -47,7 +47,7 @@ describe('CartDrawer', () => {
         setup();
         await user.click(screen.getByText('trigger add'));
         expect(screen.getByRole('dialog', { name: /basket/i })).toBeInTheDocument();
-        expect(screen.getByText('Kivi Sphere')).toBeInTheDocument();
+        expect(screen.getByText('Glass Sphere')).toBeInTheDocument();
     });
 
     // AnimatePresence keeps the panel mounted until its exit animation

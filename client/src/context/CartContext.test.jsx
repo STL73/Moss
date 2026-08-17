@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { CartProvider } from './CartContext';
 import { useCart } from '../hooks/useCart';
 
-const sample = { id: '1', slug: 'kivi-sphere', name: 'Kivi Sphere', price: 8500, images: ['a.jpg'] };
+const sample = { id: '1', slug: 'glass-sphere', name: 'Glass Sphere', price: 8500, images: ['a.jpg'] };
 
 const wrapper = ({ children }) => <CartProvider>{children}</CartProvider>;
 

@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CartProvider } from '../context/CartContext';
 
 const product = {
-    id: '1', slug: 'kivi-sphere', name: 'Kivi Sphere', species: 'Cladonia stellaris',
+    id: '1', slug: 'glass-sphere', name: 'Glass Sphere', species: 'Cladonia stellaris',
     price: 8500, images: ['a.jpg'], category: 'wreaths', stock: 6, isAvailable: true,
     description: 'A sphere of reindeer moss.',
 };
@@ -35,14 +35,14 @@ describe('ProductDetail breadcrumb', () => {
     // Without this the customer's category and sort are silently discarded and
     // they land on the unfiltered catalogue.
     it('sends the customer back to the list they were browsing', async () => {
-        renderAt('/products/kivi-sphere?category=wreaths&sort=price-asc');
+        renderAt('/products/glass-sphere?category=wreaths&sort=price-asc');
 
         await waitFor(() => expect(breadcrumb()).toBeInTheDocument());
         expect(breadcrumb()).toHaveAttribute('href', '/products?category=wreaths&sort=price-asc');
     });
 
     it('links to the plain list when there was no filter', async () => {
-        renderAt('/products/kivi-sphere');
+        renderAt('/products/glass-sphere');
 
         await waitFor(() => expect(breadcrumb()).toBeInTheDocument());
         expect(breadcrumb()).toHaveAttribute('href', '/products');

@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ProductCard from './ProductCard';
 
 const product = {
-    id: '1', slug: 'kivi-sphere', name: 'Kivi Sphere', species: 'Cladonia stellaris',
+    id: '1', slug: 'glass-sphere', name: 'Glass Sphere', species: 'Cladonia stellaris',
     price: 8500, images: ['a.jpg'], category: 'moss-pots', stock: 6, isAvailable: true,
 };
 
@@ -17,7 +17,7 @@ describe('ProductCard', () => {
 
     it('links to the product page', () => {
         renderCard();
-        expect(screen.getByRole('link', { name: /kivi sphere/i })).toHaveAttribute('href', '/products/kivi-sphere');
+        expect(screen.getByRole('link', { name: /glass sphere/i })).toHaveAttribute('href', '/products/glass-sphere');
     });
 
     // The product page reads this query back into its breadcrumb, so a customer
@@ -30,8 +30,8 @@ describe('ProductCard', () => {
             </MemoryRouter>
         );
 
-        expect(screen.getByRole('link', { name: /kivi sphere/i }))
-            .toHaveAttribute('href', '/products/kivi-sphere?category=wreaths&sort=price-asc');
+        expect(screen.getByRole('link', { name: /glass sphere/i }))
+            .toHaveAttribute('href', '/products/glass-sphere?category=wreaths&sort=price-asc');
     });
 
     it('shows the formatted price', () => {
@@ -48,21 +48,21 @@ describe('ProductCard', () => {
         const onAdd = vi.fn();
         const user = userEvent.setup();
         renderCard(onAdd);
-        await user.click(screen.getByRole('button', { name: /add kivi sphere/i }));
+        await user.click(screen.getByRole('button', { name: /add glass sphere/i }));
         expect(onAdd).toHaveBeenCalledWith(product);
     });
 
     it('gives the image meaningful alt text', () => {
         renderCard();
-        expect(screen.getByAltText('Kivi Sphere')).toBeInTheDocument();
+        expect(screen.getByAltText('Glass Sphere')).toBeInTheDocument();
     });
 
     // An <a> may not contain interactive descendants. The card stays clickable
     // via a stretched pseudo-element on the title link instead.
     it('keeps the add button outside the link', () => {
         renderCard();
-        const link = screen.getByRole('link', { name: /kivi sphere/i });
-        const addButton = screen.getByRole('button', { name: /add kivi sphere/i });
+        const link = screen.getByRole('link', { name: /glass sphere/i });
+        const addButton = screen.getByRole('button', { name: /add glass sphere/i });
         expect(link.contains(addButton)).toBe(false);
     });
 });

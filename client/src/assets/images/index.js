@@ -50,27 +50,75 @@ import dropletPlate from './dropletPlate.webp?w=768;1080;1440;2160&quality=85&as
 
 import hillside from './hillside.jpg?w=640;1280;1920&as=img';
 
-// Log, dried craspedia, layered moss. Carries both ladders because it does two
-// jobs: the full-bleed backdrop behind "Our process", and the product shot for
-// the Metsä Panel, which is the only photograph that reads as a mounted piece.
-import logArrangement from './logArrangement.jpg?w=240;480;960;1400;1920&as=img';
+// Log, dried craspedia, layered moss. Only the wide ladder now: it stopped
+// doubling as the Layered Panel product shot on 2026-08-17, once a real
+// photograph of a mounted panel existed, and is only the full-bleed backdrop
+// behind "Our process".
+import logArrangement from './logArrangement.jpg?w=640;1280;1920&as=img';
 
 // --- Product photography ---------------------------------------------------
+//
+// Filenames describe what is in the frame, and the product names in
+// data/products.js match them. Four were renamed on 2026-08-17 — paleBowl to
+// ceramicBowl, fernFrame to oakFrame, mossLetter to mossLetterM, mossWord to
+// mossSign — because the old names described either the wrong thing (there is
+// no fern in oakFrame, and never was) or nothing in particular.
 
-import apothecaryJar from './apothecaryJar.jpg?w=240;480;960;1400&as=img';
+// Grouped by the category each one sells under, in the same order as
+// data/products.js, so a missing photograph is visible as a gap rather than
+// having to be diffed across two files.
+
+// Moss Pots
 import glassSphere from './glassSphere.jpg?w=240;480;960;1400&as=img';
+import ceramicBowl from './ceramicBowl.jpg?w=240;480;960;1400&as=img';
+import stonewareCup from './stonewareCup.jpg?w=240;480;960;1400&as=img';
+
+// Wall Art
+import layeredPanel from './layeredPanel.jpg?w=240;480;960;1400&as=img';
+import oakFrame from './oakFrame.jpg?w=240;480;960;1400&as=img';
+import mossTiles from './mossTiles.jpg?w=240;480;960;1400&as=img';
+
+// Planters
 import concreteBowl from './concreteBowl.jpg?w=240;480;960;1400&as=img';
-import fernFrame from './fernFrame.jpg?w=240;480;960;1400&as=img';
-import paleBowl from './paleBowl.jpg?w=240;480;960;1400&as=img';
+import concreteTrough from './concreteTrough.jpg?w=240;480;960;1400&as=img';
+import concreteCylinder from './concreteCylinder.jpg?w=240;480;960;1400&as=img';
+
+// Tabletop
+import apothecaryJar from './apothecaryJar.jpg?w=240;480;960;1400&as=img';
+import riverStones from './riverStones.jpg?w=240;480;960;1400&as=img';
+import glassCloche from './glassCloche.jpg?w=240;480;960;1400&as=img';
+
+// Wreaths
+import mossWreath from './mossWreath.jpg?w=240;480;960;1400&as=img';
+import slimWreath from './slimWreath.jpg?w=240;480;960;1400&as=img';
+import lichenWreath from './lichenWreath.jpg?w=240;480;960;1400&as=img';
+
+// Letters and Signs
+import mossLetterM from './mossLetterM.jpg?w=240;480;960;1400&as=img';
+import mossAmpersand from './mossAmpersand.jpg?w=240;480;960;1400&as=img';
+import mossSign from './mossSign.jpg?w=240;480;960;1400&as=img';
 
 export {
   creek,
   dropletPlate,
   hillside,
   logArrangement,
-  apothecaryJar,
   glassSphere,
+  ceramicBowl,
+  stonewareCup,
+  layeredPanel,
+  oakFrame,
+  mossTiles,
   concreteBowl,
-  fernFrame,
-  paleBowl,
+  concreteTrough,
+  concreteCylinder,
+  apothecaryJar,
+  riverStones,
+  glassCloche,
+  mossWreath,
+  slimWreath,
+  lichenWreath,
+  mossLetterM,
+  mossAmpersand,
+  mossSign,
 };

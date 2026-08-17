@@ -5,7 +5,7 @@ import { CartProvider } from '../context/CartContext';
 import { useCart } from '../hooks/useCart';
 import Toast from './Toast';
 
-const sample = { id: '1', slug: 'kivi-sphere', name: 'Kivi Sphere', price: 8500, images: ['a.jpg'] };
+const sample = { id: '1', slug: 'glass-sphere', name: 'Glass Sphere', price: 8500, images: ['a.jpg'] };
 
 const Trigger = () => {
     const { addItem } = useCart();
@@ -27,6 +27,6 @@ describe('Toast', () => {
         const user = userEvent.setup();
         setup();
         await user.click(screen.getByText('add'));
-        expect(screen.getByRole('status')).toHaveTextContent('Kivi Sphere added to basket');
+        expect(screen.getByRole('status')).toHaveTextContent('Glass Sphere added to basket');
     });
 });

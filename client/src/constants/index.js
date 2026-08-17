@@ -48,10 +48,16 @@ export const footerLinks = [
             // Every entry has to match a category that has products in it. This
             // linked to Wreaths until 2026-08-16, which was fine while a wreath
             // existed and became a link to an empty grid the moment it did not.
+            // Wreaths came back on 2026-08-17 with three products behind it,
+            // along with Letters & Signs. Keep this list in step with
+            // `categories` in data/products.js — api.test.js guards the data
+            // side, but nothing checks that a footer link points somewhere real.
             { name: 'Moss Pots', to: '/products?category=moss-pots' },
             { name: 'Wall Art', to: '/products?category=wall-art' },
             { name: 'Planters', to: '/products?category=planters' },
             { name: 'Tabletop', to: '/products?category=tabletop' },
+            { name: 'Wreaths', to: '/products?category=wreaths' },
+            { name: 'Letters & Signs', to: '/products?category=letters-signs' },
         ],
     },
     {

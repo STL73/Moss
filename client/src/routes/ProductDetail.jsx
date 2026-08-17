@@ -64,6 +64,7 @@ const ProductDetailView = ({ slug }) => {
                     <li>
                         <Link
                             to={{ pathname: '/products', search }}
+                            viewTransition
                             className="hover:text-text transition-colors"
                         >
                             Shop

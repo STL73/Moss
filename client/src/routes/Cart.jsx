@@ -21,7 +21,7 @@ const Cart = () => {
                 <div className="max-container padding-x pb-24">
                     <p className="text-text-muted">Your basket is empty.</p>
                     <div className="mt-6">
-                        <Button as={Link} to="/products">Browse the collection</Button>
+                        <Button as={Link} to="/products" viewTransition>Browse the collection</Button>
                     </div>
                 </div>
             </>
@@ -46,7 +46,7 @@ const Cart = () => {
                                 className="size-24 rounded-xl object-cover shrink-0"
                             />
                             <div className="flex-1 min-w-0">
-                                <Link to={`/products/${item.slug}`} className="font-medium hover:text-accent transition-colors">
+                                <Link to={`/products/${item.slug}`} viewTransition className="font-medium hover:text-accent transition-colors">
                                     {item.name}
                                 </Link>
                                 <p className="text-xs text-text-muted italic mt-1">{item.species}</p>

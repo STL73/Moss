@@ -6,7 +6,7 @@ const NotFound = () => (
         <h1 className="font-display text-(length:--text-display) mt-4">
             This page has not <em className="text-accent italic">grown</em> yet
         </h1>
-        <Link to="/" className="inline-block mt-8 text-accent underline underline-offset-4">
+        <Link to="/" viewTransition className="inline-block mt-8 text-accent underline underline-offset-4">
             Back to home
         </Link>
     </div>
